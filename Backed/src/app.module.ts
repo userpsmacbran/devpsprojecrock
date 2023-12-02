@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceConfig } from './config/data.source';
 import { CompanyModule } from './modules/company/company.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -11,7 +13,9 @@ import { CompanyModule } from './modules/company/company.module';
       isGlobal: true
     }),
     TypeOrmModule.forRoot({...DataSourceConfig}),
-    CompanyModule
+    CompanyModule,
+    UserModule,
+    AuthModule
   ]
 })
 export class AppModule {
