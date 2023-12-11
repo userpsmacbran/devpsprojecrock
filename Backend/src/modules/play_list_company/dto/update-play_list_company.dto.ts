@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePlayListCompanyDto } from './create-play_list_company.dto';
+import { IsNumber } from "class-validator";
 
-export class UpdatePlayListCompanyDto extends PartialType(CreatePlayListCompanyDto) {}
+export class UpdatePlayListCompanyDto {
+  @IsNumber()
+  idUser: number;
+
+  @IsNumber()
+  idCompany: number
+
+  @IsNumber()
+  state: number
+}
