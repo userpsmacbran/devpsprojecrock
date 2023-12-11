@@ -1,25 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { RechargeCreditDto } from './dto/create-recharge-credit.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RechargeCreditsService {
-  create(createRechargeCreditDto: RechargeCreditDto) {
-    return 'This action adds a new rechargeCredit';
-  }
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>
+  ) {}
+  async recharge(rechargeCreditDto: RechargeCreditDto) {
+    if (rechargeCreditDto.idRgecharger === 1) {
+      const user = await this.userRepository.findOne({
+        where: { r_id: rechargeCreditDto.idUser }
+      });
+      console.log(user);
 
-  findAll() {
-    return `This action returns all rechargeCredits`;
-  }
+      if (!user) {
+        throw new HttpException('Usuario no encontrado', 400);
+      }
 
-  findOne(id: number) {
-    return `This action returns a #${id} rechargeCredit`;
-  }
+      await this.userRepository.update(rechargeCreditDto.idUser, {
+        r_wallet: user.r_wallet + rechargeCreditDto.mount
+      });
 
-  update(id: number, updateRechargeCreditDto: RechargeCreditDto) {
-    return `This action updates a #${id} rechargeCredit`;
-  }
+      const mount = await this.userRepository.findOne({
+        where: { r_id: rechargeCreditDto.idUser }
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} rechargeCredit`;
+      console.log(mount);
+      //transaction
+
+      return {
+        message: 'Wallet actualizado',
+        balance: mount.r_wallet
+      };
+    } else {
+      throw new HttpException('idRecharger no coincide', 400);
+    }
   }
 }

@@ -10,6 +10,6 @@ export class RechargeCreditsController {
 
   @Post()
   create(@Body() createRechargeCreditDto: RechargeCreditDto) {
-    return this.rechargeCreditsService.create(createRechargeCreditDto);
+    return this.rechargeCreditsService.recharge(createRechargeCreditDto);
   }
 }

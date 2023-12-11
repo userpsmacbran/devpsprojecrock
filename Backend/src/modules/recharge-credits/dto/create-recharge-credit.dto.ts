@@ -1,3 +1,15 @@
+import { IsNumber } from 'class-validator';
+
 export class RechargeCreditDto {
-  id:number
+  @IsNumber()
+  idRgecharger: number;
+  
+  @IsNumber()
+  idUser: number;
+
+  @IsNumber()
+  idCompany: number;
+
+  @IsNumber()
+  mount: number;
 }
