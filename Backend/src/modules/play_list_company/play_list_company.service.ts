@@ -117,11 +117,10 @@ export class PlayListCompanyService {
   }
 
   async update(id: number, updatePlayListCompanyDto: UpdatePlayListCompanyDto) {
-    const playlist = await this.playListCompanyRepository.findOne({where: {r_id_company: updatePlayListCompanyDto.idCompany, r_id_user: updatePlayListCompanyDto.idUser}})
 
-    await this.playListCompanyRepository.update(playlist.r_id, {r_state: updatePlayListCompanyDto.state})
+    await this.playListCompanyRepository.update(id, {r_state: updatePlayListCompanyDto.state})
 
-    return await this.playListCompanyRepository.findOne({where: {r_id: playlist.r_id}})
+    return await this.playListCompanyRepository.findOne({where: {r_id: id}})
   }
 
   remove(id: number) {
