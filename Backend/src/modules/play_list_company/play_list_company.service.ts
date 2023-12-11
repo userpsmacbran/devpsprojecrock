@@ -118,8 +118,12 @@ export class PlayListCompanyService {
 
   async update(id: number, updatePlayListCompanyDto: UpdatePlayListCompanyDto) {
 
-    await this.playListCompanyRepository.update(id, {r_state: updatePlayListCompanyDto.state})
+    if(updatePlayListCompanyDto.state === 2){
+      throw new HttpException('La playlist esta finalizada', 400);
+    }
 
+    await this.playListCompanyRepository.update(id, {r_state: updatePlayListCompanyDto.state})
+  
     return {
       message: 'Exito',
       idPlaylist: id,
