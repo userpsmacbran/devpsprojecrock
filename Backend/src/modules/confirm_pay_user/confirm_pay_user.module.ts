@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ModeplayModule } from '../modeplay/modeplay.module';
 import { QuotationPlayModule } from '../quotation_play/quotation_play.module';
 import { PlayListCompanyModule } from '../play_list_company/play_list_company.module';
+import { TransactionsModule } from '../transactions/transactions.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { PlayListCompanyModule } from '../play_list_company/play_list_company.mo
     YoutubeModule,
     ModeplayModule,
     QuotationPlayModule,
-    PlayListCompanyModule
+    PlayListCompanyModule,
+    TransactionsModule
   ],
   controllers: [ConfirmPayUserController],
   providers: [ConfirmPayUserService]

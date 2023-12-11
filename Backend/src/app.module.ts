@@ -13,6 +13,7 @@ import { QuotationPlayModule } from './modules/quotation_play/quotation_play.mod
 import { ConfirmPayUserModule } from './modules/confirm_pay_user/confirm_pay_user.module';
 import { PlayListCompanyModule } from './modules/play_list_company/play_list_company.module';
 import { RechargeCreditsModule } from './modules/recharge-credits/recharge-credits.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { RechargeCreditsModule } from './modules/recharge-credits/recharge-credi
     QuotationPlayModule,
     ConfirmPayUserModule,
     PlayListCompanyModule,
-    RechargeCreditsModule
+    RechargeCreditsModule,
+    TransactionsModule
   ],
   providers: [
     {

@@ -8,6 +8,7 @@ import { QuotationPlayService } from '../quotation_play/quotation_play.service';
 import { PlayListCompanyService } from '../play_list_company/play_list_company.service';
 import { MODEPLAY } from 'src/constants';
 import { transformTime } from 'src/utils/transformTime';
+import { TransactionsService } from '../transactions/transactions.service';
 
 @Injectable()
 export class ConfirmPayUserService {
@@ -15,7 +16,8 @@ export class ConfirmPayUserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly youtubeService: YoutubeService,
     private readonly quotationPlayService: QuotationPlayService,
-    private readonly playListCompanyService: PlayListCompanyService
+    private readonly playListCompanyService: PlayListCompanyService,
+    private readonly transctionService: TransactionsService
   ) {}
 
   async create(confirmPayUserDto: ConfirmPayUserDto) {
@@ -58,11 +60,11 @@ export class ConfirmPayUserService {
         user.r_wallet = user.r_wallet - cost;
         console.log(user.r_wallet);
         await this.userRepository.save(user);
+        await this.transctionService.create({idUser: user.r_id, type: user.r_type, amount: cost})
       } else {
         throw new HttpException('Creditos insuficientes', 400);
       }
 
-      // funcion que efectua el pago(cost)
       await this.playListCompanyService.create({
         idVideo: [confirmPayUserDto.idVideo],
         idCompany: company.r_id,

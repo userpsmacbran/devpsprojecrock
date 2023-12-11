@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { ModePlay } from './modePlay.entity';
-import { IsNumber } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
 @Entity('rock_users')

@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('r_transac_tions')
 export class Transaction extends BaseEntity {
@@ -13,4 +13,11 @@ export class Transaction extends BaseEntity {
 
   @Column({ type: 'int' })
   r_type_T: number;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @BeforeInsert()
+  setCreationDate() {
+    this.createdAt = new Date()}
 }
