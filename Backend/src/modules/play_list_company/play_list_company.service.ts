@@ -120,7 +120,10 @@ export class PlayListCompanyService {
 
     await this.playListCompanyRepository.update(id, {r_state: updatePlayListCompanyDto.state})
 
-    return await this.playListCompanyRepository.findOne({where: {r_id: id}})
+    return {
+      message: 'Exito',
+      idPlaylist: id
+    }
   }
 
   remove(id: number) {
