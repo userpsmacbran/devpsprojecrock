@@ -22,9 +22,9 @@ export class PlayListCompanyController {
     return this.playListCompanyService.findByIdCompany(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlayListCompanyDto: UpdatePlayListCompanyDto) {
-    return this.playListCompanyService.update(+id, updatePlayListCompanyDto);
+  @Patch(':idPlaylist')
+  update(@Param('idPlaylist') idPlaylist: string, @Body() updatePlayListCompanyDto: UpdatePlayListCompanyDto) {
+    return this.playListCompanyService.update(+idPlaylist, updatePlayListCompanyDto);
   }
 
   @Delete(':id')
