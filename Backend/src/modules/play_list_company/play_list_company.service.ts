@@ -122,7 +122,8 @@ export class PlayListCompanyService {
 
     return {
       message: 'Exito',
-      idPlaylist: id
+      idPlaylist: id,
+      state: updatePlayListCompanyDto.state
     }
   }
 
