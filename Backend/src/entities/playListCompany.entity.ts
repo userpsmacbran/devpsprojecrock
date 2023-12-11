@@ -1,15 +1,15 @@
-import { MODEPLAY, STATES } from 'src/constants';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MODEPLAY } from 'src/constants';
 
-@Entity('r_list_member_ships')
-export class listMembership extends BaseEntity {
+@Entity('r_play_list_companys')
+export class PlayListCompany extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   r_id: number;
 
-  @Column({ type: 'int' })
-  r_id_video: number;
+  @Column({ type: 'varchar', array: true, nullable: false })
+  r_id_video: string[] | string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int',nullable: false  })
   r_id_company: number;
 
   @Column({ type: 'int' })
@@ -18,11 +18,11 @@ export class listMembership extends BaseEntity {
   @Column({ type: 'enum', enum: MODEPLAY })
   r_order: MODEPLAY;
 
-  @Column({ type: 'time' })
-  r_count_Skin: string;
+  @Column({ type: 'varchar' })
+  r_duration: string;
 
-  @Column({ type: 'enum', enum: STATES })
-  r_state: STATES;
+  @Column({ type: 'int' })
+  r_state: number;
 
   @Column({ type: 'varchar' })
   r_title: string;
@@ -31,14 +31,14 @@ export class listMembership extends BaseEntity {
   r_description: string;
 
   @Column({ type: 'varchar' })
-  r_thumbnails_Default: string;
+  r_thumbnails_default: string;
 
   @Column({ type: 'varchar' })
-  r_thumbnails_Medium: string;
+  r_thumbnails_medium: string;
 
   @Column({ type: 'varchar' })
-  r_thumbnails_High: string;
+  r_thumbnails_high: string;
 
   @Column({ type: 'boolean' })
-  r_full_screen: boolean;
+  fullScreen: boolean;
 }

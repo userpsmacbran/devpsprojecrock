@@ -1,41 +1,52 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { LoginAuthDto } from './login-auth.dto';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString
+} from 'class-validator';
+import { ROLES, STATES } from 'src/constants';
+import { MinAge } from 'src/utils/birthDate.validator';
 
 export class RegisterAuthDto extends PartialType(LoginAuthDto) {
   @IsString()
-  r_name: string;
+  name: string;
 
   @IsString()
-  r_last_Name: string;
+  lastName: string;
 
   @IsString()
-  r_country: string;
+  country: string;
 
   @IsString()
-  r_city: string;
+  city: string;
 
   @IsString()
-  r_adress: string;
+  adress: string;
 
-  @IsNumber()
-  r_type: number;
-
-  @IsString()
-  r_logo: string;
+  @IsEnum(ROLES)
+  type: ROLES;
 
   @IsString()
-  r_code_Phone: string;
+  logo: string;
 
   @IsString()
-  r_phone: string;
+  codePhone: string;
 
-  @IsDate()
-  r_birth_Date: Date;
+  @IsString()
+  phone: string;
 
-  @IsNumber()
-  r_state_Wallet: number;
+  @IsDateString()
+  @MinAge(18, { message: 'La edad minima es 18 años.' })
+  birthDate: string;
 
-  @IsNumber()
-  r_state_User: number;
+  @IsEnum(STATES)
+  @IsOptional()
+  stateWallet: STATES;
+
+  @IsEnum(STATES)
+  @IsOptional()
+  stateUser: STATES;
 }

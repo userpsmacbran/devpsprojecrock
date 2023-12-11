@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('r_type_users')
-export class Membership extends BaseEntity {
+export class TypeUsers extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   r_id: number;
 
