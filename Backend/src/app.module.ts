@@ -12,6 +12,7 @@ import { ModeplayModule } from './modules/modeplay/modeplay.module';
 import { QuotationPlayModule } from './modules/quotation_play/quotation_play.module';
 import { ConfirmPayUserModule } from './modules/confirm_pay_user/confirm_pay_user.module';
 import { PlayListCompanyModule } from './modules/play_list_company/play_list_company.module';
+import { RechargeCreditsModule } from './modules/recharge-credits/recharge-credits.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { PlayListCompanyModule } from './modules/play_list_company/play_list_com
     ModeplayModule,
     QuotationPlayModule,
     ConfirmPayUserModule,
-    PlayListCompanyModule
+    PlayListCompanyModule,
+    RechargeCreditsModule
   ],
   providers: [
     {
