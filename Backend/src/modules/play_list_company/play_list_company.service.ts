@@ -55,7 +55,7 @@ export class PlayListCompanyService {
         duration: playListCompany.r_duration,
         state: playListCompany.r_state,
         title: playListCompany.r_title,
-        descrption: playListCompany.r_description,
+        description: playListCompany.r_description,
         thumbnailsDefault: playListCompany.r_thumbnails_default,
         thumbnailsMedium: playListCompany.r_thumbnails_medium,
         thumbnailsHigh: playListCompany.r_thumbnails_high,
@@ -72,7 +72,9 @@ export class PlayListCompanyService {
 
   async findByIdCompany(id: number) {
     try {
-      const company = await this.userRepository.findOne({ where: { r_id: id } });
+      const company = await this.userRepository.findOne({
+        where: { r_id: id }
+      });
       if (!company) {
         throw new HttpException('Compañia no existe', 400);
       }
@@ -117,18 +119,23 @@ export class PlayListCompanyService {
   }
 
   async update(id: number, updatePlayListCompanyDto: UpdatePlayListCompanyDto) {
+    const playList = await this.playListCompanyRepository.findOne({
+      where: { r_id: id }
+    });
 
-    if(updatePlayListCompanyDto.state === 2){
+    if (playList.r_state === 2) {
       throw new HttpException('La playlist esta finalizada', 400);
     }
 
-    await this.playListCompanyRepository.update(id, {r_state: updatePlayListCompanyDto.state})
-  
+    await this.playListCompanyRepository.update(id, {
+      r_state: updatePlayListCompanyDto.state
+    });
+
     return {
       message: 'Exito',
       idPlaylist: id,
       state: updatePlayListCompanyDto.state
-    }
+    };
   }
 
   remove(id: number) {

@@ -12,9 +12,5 @@ export class ConfirmPayUserDto {
   idUser: number;
 
   @IsNumber()
-  @IsOptional()
-  idModPlay: number;
-
-  @IsEnum(MODEPLAY)
-  modePlay: MODEPLAY;
+  idModePlay: number;
 }

@@ -6,10 +6,10 @@ export class PlayListCompany extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   r_id: number;
 
-  @Column({ type: 'varchar', array: true, nullable: false })
-  r_id_video: string[] | string;
+  @Column({ type: 'varchar', nullable: false })
+  r_id_video: string;
 
-  @Column({ type: 'int',nullable: false  })
+  @Column({ type: 'int', nullable: false })
   r_id_company: number;
 
   @Column({ type: 'int' })
@@ -18,7 +18,7 @@ export class PlayListCompany extends BaseEntity {
   @Column({ type: 'enum', enum: MODEPLAY })
   r_order: MODEPLAY;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'text' })
   r_duration: string;
 
   @Column({ type: 'int' })

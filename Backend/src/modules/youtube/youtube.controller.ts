@@ -12,15 +12,16 @@ export class YoutubeController {
     return await this.youtubeService.findByTitle(title, Number(type));
   }
 
+  @Get('duration')
+  async getDuration(@Query() query: QueryYoutube) {
+    const { idVideo } = query;
+    return await this.youtubeService.getDuration(idVideo);
+  }
+  
   @Get(':videoId')
   async findById(@Param('videoId') videoId: string) {
     console.log(videoId);
     return await this.youtubeService.findById(videoId);
   }
 
-  @Get('duration')
-  async getDuration(@Query() query: QueryYoutube) {
-    const { idVideo } = query;
-    return await this.youtubeService.getDuration(idVideo);
-  }
 }

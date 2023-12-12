@@ -3,9 +3,10 @@ import { RechargeCreditsService } from './recharge-credits.service';
 import { RechargeCreditsController } from './recharge-credits.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
+import { TransactionsModule } from '../transactions/transactions.module';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([User])],
+  imports: [ TypeOrmModule.forFeature([User]), TransactionsModule],
   controllers: [RechargeCreditsController],
   providers: [RechargeCreditsService],
 })

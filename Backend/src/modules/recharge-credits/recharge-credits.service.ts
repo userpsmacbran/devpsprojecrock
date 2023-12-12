@@ -3,11 +3,13 @@ import { RechargeCreditDto } from './dto/create-recharge-credit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
+import { TransactionsService } from '../transactions/transactions.service';
 
 @Injectable()
 export class RechargeCreditsService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly transctionService: TransactionsService
   ) {}
   async recharge(rechargeCreditDto: RechargeCreditDto) {
     if (rechargeCreditDto.idRgecharger === 1) {
@@ -28,8 +30,11 @@ export class RechargeCreditsService {
         where: { r_id: rechargeCreditDto.idUser }
       });
 
-      console.log(mount);
-      //transaction
+      await this.transctionService.create({
+        idUser: user.r_id,
+        type: user.r_type,
+        amount: rechargeCreditDto.mount
+      });
 
       return {
         message: 'Wallet actualizado',

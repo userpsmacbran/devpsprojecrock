@@ -1,10 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  cleanData,
-  cleanDuration,
-  cleanVideo
-} from 'src/utils/cleanData';
+import { cleanData, cleanDuration, cleanVideo } from 'src/utils/cleanData';
 
 const configService = new ConfigService();
 
@@ -49,18 +45,22 @@ export class YoutubeService {
   }
 
   async getDuration(idVideo: string) {
-    const res = await fetch(
-      `${configService.get('API_YOUTUBE')}videos?id=${String(
-        idVideo
-      )}&key=${configService.get('API_KEY')}&part=contentDetails`
-    );
+    try {
+      const res = await fetch(
+        `${configService.get('API_YOUTUBE')}videos?id=${String(
+          idVideo
+        )}&key=${configService.get('API_KEY')}&part=contentDetails`
+      );
 
-    const dataRaw = await res.json();
+      const dataRaw = await res.json();
 
-    if (dataRaw.items.length < 1) {
-      throw new HttpException('Video no encontrado', 400);
+      if (dataRaw.items.length < 1) {
+        throw new HttpException('Video no encontrado', 400);
+      }
+
+      return cleanDuration(dataRaw.items[0].contentDetails.duration);
+    } catch (error) {
+      throw new HttpException(error, 400);
     }
-
-    return cleanDuration(dataRaw.items[0].contentDetails.duration);
   }
 }

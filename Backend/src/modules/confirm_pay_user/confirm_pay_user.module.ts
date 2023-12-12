@@ -14,7 +14,6 @@ import { TransactionsModule } from '../transactions/transactions.module';
     TypeOrmModule.forFeature([User]),
     YoutubeModule,
     ModeplayModule,
-    QuotationPlayModule,
     PlayListCompanyModule,
     TransactionsModule
   ],

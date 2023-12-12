@@ -8,8 +8,8 @@ import {
 import { MODEPLAY } from 'src/constants';
 
 export class CreatePlayListCompanyDto {
-  @IsArray()
-  idVideo: string[];
+  @IsString()
+  idVideo: string;
 
   @IsNumber()
   idCompany: number;

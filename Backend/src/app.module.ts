@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceConfig } from './config/data.source';
-import { CompanyModule } from './modules/company/company.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -22,7 +21,6 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
       isGlobal: true
     }),
     TypeOrmModule.forRoot({ ...DataSourceConfig }),
-    CompanyModule,
     UserModule,
     AuthModule,
     YoutubeModule,
