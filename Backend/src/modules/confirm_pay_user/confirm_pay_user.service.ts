@@ -20,70 +20,65 @@ export class ConfirmPayUserService {
   ) {}
 
   async create(confirmPayUserDto: ConfirmPayUserDto) {
-    const user = await this.userRepository.findOne({
-      where: { r_id: confirmPayUserDto.idUser }
-    });
-
-    const company = await this.userRepository.findOne({
-      where: { r_id: confirmPayUserDto.idCompany },
-      relations: ['modePlays']
-    });
-
-    if (!user) throw new HttpException('Usuario no encontrado', 404);
-
-    if (!company) throw new HttpException('Compañia no encontrada', 404);
-
-    if (user.r_state_Wallet === 0) {
-      const duration = await this.youtubeService.getDuration(
-        confirmPayUserDto.idVideo
-      );
-
-      const { cost, type } = await this.modePlayService.findOne(
-        confirmPayUserDto.idModePlay
-      );
-
-      const costTotal = Math.ceil(cost * (duration / 7));
-      console.log(costTotal);
-
-      const dataVideo = await this.youtubeService.findById(
-        confirmPayUserDto.idVideo
-      );
-
-      if (user.r_wallet - costTotal >= 0) {
-        user.r_wallet = user.r_wallet - costTotal;
-        await this.userRepository.save(user);
-        await this.transctionService.create({
-          idUser: user.r_id,
-          type: user.r_type,
-          amount: costTotal
-        });
-      } else {
-        throw new HttpException('Creditos insuficientes', 400);
-      }
-
-      await this.playListCompanyService.create({
-        idVideo: confirmPayUserDto.idVideo,
-        idCompany: company.r_id,
-        idUser: user.r_id,
-        order: type,
-        duration: transformTime(duration),
-        state: 1,
-        title: dataVideo.title,
-        description: dataVideo.description,
-        thumbnailsDefault: dataVideo.miniaturas.default.url,
-        thumbnailsMedium: dataVideo.miniaturas.medium.url,
-        thumbnailsHigh: dataVideo.miniaturas.high.url,
-        fullScreen: false
+    try {
+      const user = await this.userRepository.findOne({
+        where: { r_id: confirmPayUserDto.idUser }
       });
-      return { message: 'Pago exitoso', turn: 1 };
-    }
-  }
 
-  findAll() {
-    return `This action returns all confirmPayUser`;
-  }
+      const company = await this.userRepository.findOne({
+        where: { r_id: confirmPayUserDto.idCompany },
+        relations: ['modePlays']
+      });
 
-  findOne(id: number) {
-    return `This action returns a #${id} confirmPayUser`;
+      if (!user) throw new HttpException('Usuario no encontrado', 404);
+
+      if (!company) throw new HttpException('Compañia no encontrada', 404);
+
+      if (user.r_state_Wallet === 0) {
+        const duration = await this.youtubeService.getDuration(
+          confirmPayUserDto.idVideo
+        );
+
+        const { data } = await this.modePlayService.findOne(
+          confirmPayUserDto.idModePlay
+        );
+
+        const { cost, type } = data;
+
+        const costTotal = Math.ceil(cost * (duration / 7));
+
+        const dataVideo = await this.youtubeService.findById(
+          confirmPayUserDto.idVideo
+        );
+
+        if (user.r_wallet - costTotal >= 0) {
+          user.r_wallet = user.r_wallet - costTotal;
+          await this.userRepository.save(user);
+          await this.transctionService.create({
+            idUser: user.r_id,
+            type: user.r_type,
+            amount: costTotal
+          });
+        } else {
+          throw new HttpException('Creditos insuficientes', 400);
+        }
+
+        await this.playListCompanyService.create({
+          idVideo: confirmPayUserDto.idVideo,
+          idCompany: company.r_id,
+          idUser: user.r_id,
+          order: type,
+          duration: transformTime(duration),
+          state: 1,
+          title: dataVideo.title,
+          description: dataVideo.description,
+          thumbnailsDefault: dataVideo.miniaturas.default.url,
+          thumbnailsMedium: dataVideo.miniaturas.medium.url,
+          thumbnailsHigh: dataVideo.miniaturas.high.url,
+          fullScreen: false
+        });
+        return { message: 'Pago exitoso', turn: 1 };
+      }
+    } catch (error) {}
   }
 }

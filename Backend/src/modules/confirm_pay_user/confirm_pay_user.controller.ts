@@ -10,14 +10,4 @@ export class ConfirmPayUserController {
   create(@Body() confirmPayUserDto: ConfirmPayUserDto) {
     return this.confirmPayUserService.create(confirmPayUserDto);
   }
-
-  @Get()
-  findAll() {
-    return this.confirmPayUserService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.confirmPayUserService.findOne(+id);
-  }
 }

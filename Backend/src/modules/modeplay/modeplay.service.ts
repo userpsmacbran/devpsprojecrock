@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateModeplayDto } from './dto/create-modeplay.dto';
 import { UpdateModeplayDto } from './dto/update-modeplay.dto';
 import { ModePlay } from 'src/entities/modePlay.entity';
@@ -16,14 +16,17 @@ export class ModeplayService {
 
   async create({ idCompany, title }: CreateModeplayDto) {
     try {
-      return await this.modePlayRepository.save({
-        r_id_company: idCompany,
-        r_cost: COST_MODEPLAY[title],
-        r_title: title,
-        r_type: Number(MODEPLAY[title])
-      });
+      return {
+        message: 'ok',
+        data: await this.modePlayRepository.save({
+          r_id_company: idCompany,
+          r_cost: COST_MODEPLAY[title],
+          r_title: title,
+          r_type: Number(MODEPLAY[title])
+        })
+      };
     } catch (error) {
-      console.log(error);
+      throw new HttpException(error, 400);
     }
   }
 
@@ -32,14 +35,23 @@ export class ModeplayService {
   }
 
   async findOne(id: number) {
-    const mode = await this.modePlayRepository.findOne({ where: { r_id: id } });
-    return {
-      id: mode.r_id,
-      idCompany: mode.r_id_company,
-      cost: mode.r_cost,
-      title: mode.r_title,
-      type: mode.r_type
-    };
+    try {
+      const mode = await this.modePlayRepository.findOne({
+        where: { r_id: id }
+      });
+      return {
+        message: 'ok',
+        data: {
+          id: mode.r_id,
+          idCompany: mode.r_id_company,
+          cost: mode.r_cost,
+          title: mode.r_title,
+          type: mode.r_type
+        }
+      };
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
   }
 
   update(id: number, updateModeplayDto: UpdateModeplayDto) {
