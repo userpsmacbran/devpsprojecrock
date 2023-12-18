@@ -10,3 +10,5 @@ deployment:
     - echo "Despliegue completado exitosamente."
 
 subdomainurl: http://develop.back.psrockola.com
+fqdn: develop.back.psrockola.com
+```

@@ -18,8 +18,9 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
   const configService = app.get(ConfigService);
-
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(configService.get("PORT"));
+  console.log("Running on port: ", configService.get("PORT"));
 }
+
 bootstrap();
