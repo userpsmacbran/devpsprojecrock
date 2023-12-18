@@ -1,13 +1,28 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
+import { User } from "./user.entity";
 
-@Entity('r_wallet')
-export class Membership extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+@Entity("r_wallet")
+export class Wallet extends BaseEntity {
+  @PrimaryGeneratedColumn("uuid")
   r_id: number;
 
-  @Column({ type: 'int' })
-  r_count: number;
+  @Column({ type: "varchar", length: 255 })
+  r_amount: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: "date" })
   r_last_Update: Date;
+
+  @OneToOne(() => User, (user) => user.wallet, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
+  user: User;
 }

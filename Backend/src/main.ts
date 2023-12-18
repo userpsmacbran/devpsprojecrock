@@ -1,15 +1,15 @@
-import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import * as morgan from 'morgan';
-import { CORS } from './constants';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { ConfigService } from "@nestjs/config";
+import * as morgan from "morgan";
+import { CORS } from "./constants";
+import { ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: ['debug'] });
-  app.setGlobalPrefix('api');
+  const app = await NestFactory.create(AppModule, { logger: ["debug"] });
+  app.setGlobalPrefix("api");
 
-  app.use(morgan('dev'));
+  app.use(morgan("dev"));
 
   app.enableCors(CORS);
 
@@ -20,6 +20,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(configService.get('PORT'));
+  await app.listen(configService.get("PORT"));
 }
 bootstrap();

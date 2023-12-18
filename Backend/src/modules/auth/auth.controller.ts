@@ -5,22 +5,22 @@ import {
   Body,
   Patch,
   Param,
-  Delete
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LoginAuthDto } from './dto/login-auth.dto';
-import { RegisterAuthDto } from './dto/register-auth.dto';
+  Delete,
+} from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { LoginAuthDto } from "./dto/login-auth.dto";
+import { RegisterAuthDtoBase } from "./dto/register-auth.dto";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  registerUser(@Body() userObjetRegister: RegisterAuthDto) {
+  @Post("register")
+  registerUser(@Body() userObjetRegister: RegisterAuthDtoBase) {
     return this.authService.register(userObjetRegister);
   }
 
-  @Post('login')
+  @Post("login")
   loginUser(@Body() userObjetLogin: LoginAuthDto) {
     return this.authService.login(userObjetLogin);
   }

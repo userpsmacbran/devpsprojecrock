@@ -1,76 +1,85 @@
-import { ROLES, STATES } from 'src/constants';
+import { ROLES, STATES } from "src/constants";
 import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
-  PrimaryGeneratedColumn
-} from 'typeorm';
-import { ModePlay } from './modePlay.entity';
-import { Exclude } from 'class-transformer';
-
-@Entity('rock_users')
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ModePlay } from "./modePlay.entity";
+import { Exclude } from "class-transformer";
+import { Wallet } from "./wallet.entity";
+@Entity("rock_users")
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn("increment")
   r_id: number;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_name: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_last_Name: string;
 
-  @Column({ type: 'varchar', nullable: false, unique: true })
+  @Column({ type: "varchar", nullable: false, unique: true })
   r_email: string;
 
   @Exclude()
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_pass_word: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_country: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_city: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_adress: string;
 
-  @Column({ type: 'enum', enum: ROLES })
+  @Column({ type: "enum", enum: ROLES })
   r_type: ROLES;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_logo: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: "varchar", nullable: false })
   r_code_Phone: string;
 
-  @Column({ type: 'varchar', nullable: false, unique: true })
+  @Column({ type: "varchar", nullable: false })
   r_phone: string;
 
-  @Column({ type: 'date', nullable: false })
+  @Column({ type: "date", nullable: false })
   r_birth_Date: Date;
 
+  @Column({ type: "varchar", nullable: true })
+  r_ruc?: String;
+
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: STATES,
     default: 0,
-    nullable: true
+    nullable: true,
   })
   r_state_Wallet: STATES;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: STATES,
-    default: 0,
-    nullable: true
+    default: 1,
+    nullable: true,
   })
   r_state_User: STATES.ACTIVO;
 
   @Exclude()
-  @Column({ type: 'int', default: 20 })
+  @Column({ type: "int", default: 20 })
   r_wallet?: number = 20;
+
+  @OneToOne(() => Wallet, (wallet) => wallet.user, { eager: true })
+  @JoinColumn()
+  wallet: Wallet;
 
   @ManyToMany(() => ModePlay, { cascade: true })
   @JoinTable()

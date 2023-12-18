@@ -1,16 +1,19 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { LoginAuthDto } from './login-auth.dto';
+import { PartialType } from "@nestjs/mapped-types";
+import { LoginAuthDto } from "./login-auth.dto";
 import {
   IsDateString,
+  IsDefined,
   IsEnum,
+  IsISO8601,
   IsNumber,
   IsOptional,
-  IsString
-} from 'class-validator';
-import { ROLES, STATES } from 'src/constants';
-import { MinAge } from 'src/utils/birthDate.validator';
+  IsString,
+  ValidateIf,
+} from "class-validator";
+import { ROLES, STATES } from "src/constants";
+import { MinAge } from "src/utils/birthDate.validator";
 
-export class RegisterAuthDto extends PartialType(LoginAuthDto) {
+export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
   @IsString()
   name: string;
 
@@ -38,8 +41,15 @@ export class RegisterAuthDto extends PartialType(LoginAuthDto) {
   @IsString()
   phone: string;
 
-  @IsDateString()
-  @MinAge(18, { message: 'La edad minima es 18 años.' })
+  @IsOptional()
+  ruc?: string;
+
+  @IsString()
+  @IsISO8601(
+    { strict: true },
+    { message: "The date format must be 'YYYY-MM-DD'" }
+  )
+  @MinAge(18, { message: "The minimum age is 18 years." })
   birthDate: string;
 
   @IsEnum(STATES)

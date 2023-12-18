@@ -1,18 +1,21 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { DataSource, DataSourceOptions } from "typeorm";
 
 ConfigModule.forRoot({
-  envFilePath: `.${process.env.NODE_ENV}.env`
+  envFilePath: `.${process.env.NODE_ENV.trim()}.env`,
 });
 
 const configService = new ConfigService();
 
 export const DataSourceConfig: DataSourceOptions = {
-  type: 'postgres',
-  url: configService.get('DB_URL'),
-  ssl: true,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: true
+  type: "postgres",
+  host: "localhost",
+  port: 5432,
+  username: "postgres",
+  password: "1234",
+  database: "rockola",
+  entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+  synchronize: true,
 };
 
 export const AppDS = new DataSource(DataSourceConfig);
