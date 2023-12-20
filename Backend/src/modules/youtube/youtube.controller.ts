@@ -1,8 +1,8 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { YoutubeService } from './youtube.service';
-import { QueryYoutube } from './dto/Query.dto';
+import { Controller, Get, Param, Query } from "@nestjs/common";
+import { YoutubeService } from "./youtube.service";
+import { QueryYoutube } from "./dto/Query.dto";
 
-@Controller('youtube')
+@Controller("youtube")
 export class YoutubeController {
   constructor(private readonly youtubeService: YoutubeService) {}
 
@@ -12,16 +12,14 @@ export class YoutubeController {
     return await this.youtubeService.findByTitle(title, Number(type));
   }
 
-  @Get('duration')
+  @Get("duration")
   async getDuration(@Query() query: QueryYoutube) {
     const { idVideo } = query;
     return await this.youtubeService.getDuration(idVideo);
   }
-  
-  @Get(':videoId')
-  async findById(@Param('videoId') videoId: string) {
-    console.log(videoId);
+
+  @Get(":videoId")
+  async findById(@Param("videoId") videoId: string) {
     return await this.youtubeService.findById(videoId);
   }
-
 }

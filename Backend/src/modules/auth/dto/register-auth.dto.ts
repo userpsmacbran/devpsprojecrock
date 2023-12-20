@@ -17,6 +17,7 @@ export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsString()
   lastName: string;
 
@@ -44,6 +45,7 @@ export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
   @IsOptional()
   ruc?: string;
 
+  @IsOptional()
   @IsString()
   @IsISO8601(
     { strict: true },

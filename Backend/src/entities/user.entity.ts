@@ -12,6 +12,7 @@ import {
 import { ModePlay } from "./modePlay.entity";
 import { Exclude } from "class-transformer";
 import { Wallet } from "./wallet.entity";
+import { Owner } from "./owner.entity";
 @Entity("rock_users")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -20,7 +21,7 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", nullable: false })
   r_name: string;
 
-  @Column({ type: "varchar", nullable: false })
+  @Column({ type: "varchar", nullable: true })
   r_last_Name: string;
 
   @Column({ type: "varchar", nullable: false, unique: true })
@@ -51,7 +52,7 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", nullable: false })
   r_phone: string;
 
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "date", nullable: true })
   r_birth_Date: Date;
 
   @Column({ type: "varchar", nullable: true })
@@ -68,7 +69,7 @@ export class User extends BaseEntity {
   @Column({
     type: "enum",
     enum: STATES,
-    default: 1,
+    default: 0,
     nullable: true,
   })
   r_state_User: STATES.ACTIVO;
@@ -77,11 +78,15 @@ export class User extends BaseEntity {
   @Column({ type: "int", default: 20 })
   r_wallet?: number = 20;
 
-  @OneToOne(() => Wallet, (wallet) => wallet.user, { eager: true })
+  @OneToOne(() => Wallet, (wallet) => wallet.user)
   @JoinColumn()
   wallet: Wallet;
 
   @ManyToMany(() => ModePlay, { cascade: true })
   @JoinTable()
   modePlays: ModePlay[];
+
+  @OneToOne(() => Owner, (owner) => owner.user)
+  @JoinColumn()
+  owner: Owner;
 }

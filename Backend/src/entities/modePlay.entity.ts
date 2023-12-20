@@ -1,30 +1,17 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { MODEPLAY, NAME_MODEPLAY } from "src/constants";
-import { User } from "./user.entity";
 
-@Entity("r_mode_plays")
+@Entity("mode_plays")
 export class ModePlay extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
-  r_id: number;
+  id: number;
 
   @Column({ type: "int" })
-  r_id_company: number;
-
-  @Column({ type: "int" })
-  r_cost: number;
+  value: number;
 
   @Column({ type: "enum", enum: NAME_MODEPLAY })
-  r_title: NAME_MODEPLAY;
+  title: NAME_MODEPLAY;
 
   @Column({ type: "enum", enum: MODEPLAY })
-  r_type: MODEPLAY;
-
-  @ManyToMany(() => User, (empresa) => empresa.modePlays)
-  empresas: User[];
+  type: MODEPLAY;
 }

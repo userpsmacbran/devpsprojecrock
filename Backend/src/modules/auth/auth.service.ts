@@ -27,8 +27,11 @@ export class AuthService {
     try {
       const { password, email, type, ruc, birthDate } = userObjectRegister;
 
-      if (!isValidDateFormat(birthDate))
-        return new HttpException("DATE_FORMAT_IS_INVALID", 400);
+      if (type !== ROLES.EMPRESA) {
+        if (!isValidDateFormat(birthDate)) {
+          return new HttpException("DATE_FORMAT_IS_INVALID", 400);
+        }
+      }
       if (!email) return new HttpException("EMAIL_IS_REQUIRED", 400);
       if (!password) return new HttpException("PASSWORD_IS_REQUIRED", 400);
 
@@ -47,9 +50,8 @@ export class AuthService {
       }
 
       if (type === ROLES.EMPRESA || type === ROLES.CLIENTE) {
-        user = await this.userRepository.save({
+        let userPayload: any = {
           r_name: userObjectRegister.name,
-          r_last_Name: userObjectRegister.lastName,
           r_email: userObjectRegister.email,
           r_pass_word: plaintoHash,
           r_country: userObjectRegister.country,
@@ -59,11 +61,19 @@ export class AuthService {
           r_logo: userObjectRegister.logo,
           r_code_Phone: userObjectRegister.codePhone,
           r_phone: userObjectRegister.phone,
-          r_birth_Date: userObjectRegister.birthDate,
-          ...(type === ROLES.EMPRESA && { r_ruc: userObjectRegister.ruc }),
-        });
+        };
 
-        await this.walletService.createWalletForUser(user.r_id);
+        if (type === ROLES.EMPRESA) {
+          userPayload.r_ruc = userObjectRegister.ruc;
+        } else {
+          userPayload.r_last_Name = userObjectRegister.lastName;
+          userPayload.r_birth_Date = userObjectRegister.birthDate;
+        }
+
+        user = await this.userRepository.save(userPayload);
+
+        const wallet = await this.walletService.createWalletForUser(user.r_id);
+        user.wallet = wallet;
         await this.userRepository.save(user);
       }
 
@@ -137,30 +147,6 @@ export class AuthService {
       };
 
       return data;
-    } catch (error) {
-      throw new HttpException(error, 400);
-    }
-  }
-
-  async addModePlays(user: any) {
-    try {
-      const platinum = await this.modePlayService.create({
-        idCompany: user.r_id,
-        title: NAME_MODEPLAY.PLATINUM,
-      });
-      const vip = await this.modePlayService.create({
-        idCompany: user.r_id,
-        title: NAME_MODEPLAY.VIP,
-      });
-      const normal = await this.modePlayService.create({
-        idCompany: user.r_id,
-        title: NAME_MODEPLAY.NORMAL,
-      });
-
-      return {
-        message: "ok",
-        data: [platinum.data, vip.data, normal.data],
-      };
     } catch (error) {
       throw new HttpException(error, 400);
     }

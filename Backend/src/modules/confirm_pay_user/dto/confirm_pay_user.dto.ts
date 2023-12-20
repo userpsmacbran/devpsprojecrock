@@ -1,5 +1,5 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { MODEPLAY } from 'src/constants';
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { MODEPLAY } from "src/constants";
 
 export class ConfirmPayUserDto {
   @IsString()
@@ -12,5 +12,5 @@ export class ConfirmPayUserDto {
   idUser: number;
 
   @IsNumber()
-  idModePlay: number;
+  typeCompany: number;
 }

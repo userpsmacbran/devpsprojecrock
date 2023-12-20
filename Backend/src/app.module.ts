@@ -14,6 +14,8 @@ import { PlayListCompanyModule } from "./modules/play_list_company/play_list_com
 import { RechargeCreditsModule } from "./modules/recharge-credits/recharge-credits.module";
 import { TransactionsModule } from "./modules/transactions/transactions.module";
 import { CryptoModule } from "./modules/crypto/crypto.module";
+import { OwnerModule } from "./modules/owner/owner.module";
+import { WalletModule } from "./modules/wallet/wallet.module";
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { CryptoModule } from "./modules/crypto/crypto.module";
     RechargeCreditsModule,
     TransactionsModule,
     CryptoModule,
+    OwnerModule,
+    WalletModule,
   ],
   providers: [
     {

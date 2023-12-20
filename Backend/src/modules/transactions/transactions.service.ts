@@ -1,8 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Transaction } from 'src/entities/transactions.entity';
-import { Repository } from 'typeorm';
+import { HttpException, Injectable } from "@nestjs/common";
+import { CreateTransactionDto } from "./dto/create-transaction.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Transaction } from "src/entities/transactions.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class TransactionsService {
@@ -18,7 +18,7 @@ export class TransactionsService {
       const transaction = await this.transactionsRepository.save({
         r_id_User: idUser,
         r_amount: amount,
-        r_type_T: type
+        r_type_T: type,
       });
 
       return {
@@ -26,11 +26,10 @@ export class TransactionsService {
         idUser: transaction.r_id_User,
         amount: transaction.r_amount,
         type: transaction.r_type_T,
-        date: transaction.createdAt
+        date: transaction.createdAt,
       };
     } catch (error) {
       throw new HttpException(error, 400);
     }
   }
-
 }

@@ -60,4 +60,49 @@ export class WalletService {
       throw new HttpException(error, 400);
     }
   }
+
+  async addAmount(walletId: any, amount: number): Promise<Wallet> {
+    try {
+      const wallet = await this.walletRepository.findOne({
+        where: {
+          r_id: walletId,
+        },
+      });
+      if (!wallet) {
+        throw new HttpException("WALLET_NOT_FOUND", 400);
+      }
+
+      const decryptedAmount = this.cryptoService.decrypt(wallet.r_amount);
+      const newAmount = parseInt(decryptedAmount) + amount;
+      const encryptedAmount = this.cryptoService.encrypt(newAmount.toString());
+
+      wallet.r_amount = encryptedAmount;
+      wallet.r_last_Update = new Date();
+
+      return await this.walletRepository.save(wallet);
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
+  }
+
+  async updateNewAmount(walletId: any, newAmount: number): Promise<Wallet> {
+    try {
+      const wallet = await this.walletRepository.findOne({
+        where: {
+          r_id: walletId,
+        },
+      });
+      if (!wallet) {
+        throw new HttpException("WALLET_NOT_FOUND", 400);
+      }
+
+      const encryptedAmount = this.cryptoService.encrypt(newAmount.toString());
+      wallet.r_amount = encryptedAmount;
+      wallet.r_last_Update = new Date();
+
+      return await this.walletRepository.save(wallet);
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
+  }
 }

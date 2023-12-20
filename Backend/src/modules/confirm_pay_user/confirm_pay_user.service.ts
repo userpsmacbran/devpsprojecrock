@@ -1,13 +1,15 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { ConfirmPayUserDto } from './dto/confirm_pay_user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
-import { YoutubeService } from '../youtube/youtube.service';
-import { PlayListCompanyService } from '../play_list_company/play_list_company.service';
-import { transformTime } from 'src/utils/transformTime';
-import { TransactionsService } from '../transactions/transactions.service';
-import { ModeplayService } from '../modeplay/modeplay.service';
+import { HttpException, Injectable } from "@nestjs/common";
+import { ConfirmPayUserDto } from "./dto/confirm_pay_user.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/entities/user.entity";
+import { Repository } from "typeorm";
+import { YoutubeService } from "../youtube/youtube.service";
+import { PlayListCompanyService } from "../play_list_company/play_list_company.service";
+import { transformTime } from "src/utils/transformTime";
+import { TransactionsService } from "../transactions/transactions.service";
+import { ModeplayService } from "../modeplay/modeplay.service";
+import { ROLES } from "src/constants";
+import { WalletService } from "../wallet/wallet.service";
 
 @Injectable()
 export class ConfirmPayUserService {
@@ -16,58 +18,66 @@ export class ConfirmPayUserService {
     private readonly youtubeService: YoutubeService,
     private readonly modePlayService: ModeplayService,
     private readonly playListCompanyService: PlayListCompanyService,
-    private readonly transctionService: TransactionsService
+    private readonly transctionService: TransactionsService,
+    private readonly walletService: WalletService
   ) {}
 
   async create(confirmPayUserDto: ConfirmPayUserDto) {
     try {
       const user = await this.userRepository.findOne({
-        where: { r_id: confirmPayUserDto.idUser }
+        where: { r_id: confirmPayUserDto.idUser },
+        relations: ["wallet"],
       });
+      if (!user) return new HttpException("USER_NOT_FOUND", 404);
+      if (user.r_type !== ROLES.CLIENTE)
+        return new HttpException("USER_NOT_CLIENT", 400);
 
       const company = await this.userRepository.findOne({
         where: { r_id: confirmPayUserDto.idCompany },
-        relations: ['modePlays']
       });
 
-      if (!user) throw new HttpException('Usuario no encontrado', 404);
-
-      if (!company) throw new HttpException('Compañia no encontrada', 404);
+      if (!company) return new HttpException("COMPANY_NOT_FOUND", 404);
+      if (company.r_type !== ROLES.EMPRESA)
+        return new HttpException("USER_NOT_COMPANY", 400);
 
       if (user.r_state_Wallet === 0) {
         const duration = await this.youtubeService.getDuration(
           confirmPayUserDto.idVideo
         );
-
-        const { data } = await this.modePlayService.findOne(
-          confirmPayUserDto.idModePlay
+        const { type, value } = await this.modePlayService.findOne(
+          confirmPayUserDto.typeCompany
         );
 
-        const { cost, type } = data;
-
-        const costTotal = Math.ceil(cost * (duration / 7));
-
+        const costTotal = Math.ceil(value * (duration / 7));
+        console.log("costo de la reproduccion: " + costTotal);
         const dataVideo = await this.youtubeService.findById(
           confirmPayUserDto.idVideo
         );
 
-        if (user.r_wallet - costTotal >= 0) {
-          user.r_wallet = user.r_wallet - costTotal;
-          await this.userRepository.save(user);
+        const amountUserDecryptedString =
+          await this.walletService.getDecryptedAmount(user.wallet.r_id);
+        const amountUserDecrypted = parseInt(amountUserDecryptedString);
+
+        const remainingAmount = amountUserDecrypted - costTotal;
+        if (remainingAmount >= 0) {
+          await this.walletService.updateNewAmount(
+            user.wallet.r_id,
+            remainingAmount
+          );
+
           await this.transctionService.create({
             idUser: user.r_id,
             type: user.r_type,
-            amount: costTotal
+            amount: costTotal,
           });
         } else {
-          throw new HttpException('Creditos insuficientes', 400);
+          return new HttpException("INSUFFICIENT_CREDITS", 500);
         }
-
         await this.playListCompanyService.create({
           idVideo: confirmPayUserDto.idVideo,
           idCompany: company.r_id,
           idUser: user.r_id,
-          order: type,
+          order: 0,
           duration: transformTime(duration),
           state: 1,
           title: dataVideo.title,
@@ -75,10 +85,13 @@ export class ConfirmPayUserService {
           thumbnailsDefault: dataVideo.miniaturas.default.url,
           thumbnailsMedium: dataVideo.miniaturas.medium.url,
           thumbnailsHigh: dataVideo.miniaturas.high.url,
-          fullScreen: false
+          fullScreen: false,
         });
-        return { message: 'Pago exitoso', turn: 1 };
+
+        return { message: "Pago exitoso", turn: 1 };
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
