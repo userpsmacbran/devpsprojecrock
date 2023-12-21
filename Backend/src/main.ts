@@ -12,7 +12,7 @@ async function bootstrap() {
   app.use(morgan("dev"));
 
   app.enableCors(CORS);
-
+  console.log("Hola");
   const reflector = app.get(Reflector);
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
