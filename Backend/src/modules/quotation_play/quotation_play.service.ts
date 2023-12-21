@@ -16,18 +16,18 @@ export class QuotationPlayService {
   async calculatePrice(createQuotationPlayDto: CalculatePriceDto) {
     try {
       const user = await this.userRepository.findOne({
-        where: { r_id: createQuotationPlayDto.idUser },
+        where: { id: createQuotationPlayDto.idUser },
       });
 
       const company = await this.userRepository.findOne({
-        where: { r_id: createQuotationPlayDto.idCompany },
+        where: { id: createQuotationPlayDto.idCompany },
         relations: ["modePlays"],
       });
 
       if (!user) throw new HttpException("Usuario no encontrado", 404);
 
       if (!company) throw new HttpException("Compañia no encontrada", 404);
-      if (user.r_state_Wallet === 0) {
+      if (user.state_Wallet === 0) {
         const duration = await this.youtubeService.getDuration(
           createQuotationPlayDto.idVideo
         );
@@ -58,7 +58,7 @@ export class QuotationPlayService {
             },
           ],
           idVideo: createQuotationPlayDto.idVideo,
-          idCompany: user.r_id,
+          idCompany: user.id,
         };
       } else {
         throw new HttpException("WALLET_INVALID", 400);

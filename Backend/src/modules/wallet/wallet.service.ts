@@ -19,7 +19,7 @@ export class WalletService {
     try {
       const user = await this.userRepository.findOne({
         where: {
-          r_id: user_id,
+          id: user_id,
         },
       });
       if (!user) {
@@ -31,8 +31,8 @@ export class WalletService {
         initialAmount.toString()
       );
       const wallet = await this.walletRepository.create({
-        r_amount: encryptedAmount,
-        r_last_Update: new Date(),
+        amount: encryptedAmount,
+        last_Update: new Date(),
         user: user,
       });
 
@@ -46,7 +46,7 @@ export class WalletService {
     try {
       const wallet = await this.walletRepository.findOne({
         where: {
-          r_id: walletId,
+          id: walletId,
         },
       });
 
@@ -54,7 +54,7 @@ export class WalletService {
         throw new HttpException("WALLET_NOT_FOUND", 400);
       }
 
-      const decryptedAmount = this.cryptoService.decrypt(wallet.r_amount);
+      const decryptedAmount = this.cryptoService.decrypt(wallet.amount);
       return decryptedAmount;
     } catch (error) {
       throw new HttpException(error, 400);
@@ -65,19 +65,19 @@ export class WalletService {
     try {
       const wallet = await this.walletRepository.findOne({
         where: {
-          r_id: walletId,
+          id: walletId,
         },
       });
       if (!wallet) {
         throw new HttpException("WALLET_NOT_FOUND", 400);
       }
 
-      const decryptedAmount = this.cryptoService.decrypt(wallet.r_amount);
+      const decryptedAmount = this.cryptoService.decrypt(wallet.amount);
       const newAmount = parseInt(decryptedAmount) + amount;
       const encryptedAmount = this.cryptoService.encrypt(newAmount.toString());
 
-      wallet.r_amount = encryptedAmount;
-      wallet.r_last_Update = new Date();
+      wallet.amount = encryptedAmount;
+      wallet.last_Update = new Date();
 
       return await this.walletRepository.save(wallet);
     } catch (error) {
@@ -89,7 +89,7 @@ export class WalletService {
     try {
       const wallet = await this.walletRepository.findOne({
         where: {
-          r_id: walletId,
+          id: walletId,
         },
       });
       if (!wallet) {
@@ -97,8 +97,8 @@ export class WalletService {
       }
 
       const encryptedAmount = this.cryptoService.encrypt(newAmount.toString());
-      wallet.r_amount = encryptedAmount;
-      wallet.r_last_Update = new Date();
+      wallet.amount = encryptedAmount;
+      wallet.last_Update = new Date();
 
       return await this.walletRepository.save(wallet);
     } catch (error) {

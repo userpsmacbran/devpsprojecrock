@@ -21,7 +21,7 @@ export class OwnerService {
       // Validaciones de datos de entrada (birthdate del owner)
       const userFound = await this.userRepository.findOne({
         where: {
-          r_id: idUser,
+          id: idUser,
         },
       });
       if (!userFound) {

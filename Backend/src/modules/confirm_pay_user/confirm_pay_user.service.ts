@@ -25,22 +25,22 @@ export class ConfirmPayUserService {
   async create(confirmPayUserDto: ConfirmPayUserDto) {
     try {
       const user = await this.userRepository.findOne({
-        where: { r_id: confirmPayUserDto.idUser },
+        where: { id: confirmPayUserDto.idUser },
         relations: ["wallet"],
       });
       if (!user) return new HttpException("USER_NOT_FOUND", 404);
-      if (user.r_type !== ROLES.CLIENTE)
+      if (user.type !== ROLES.CLIENTE)
         return new HttpException("USER_NOT_CLIENT", 400);
 
       const company = await this.userRepository.findOne({
-        where: { r_id: confirmPayUserDto.idCompany },
+        where: { id: confirmPayUserDto.idCompany },
       });
 
       if (!company) return new HttpException("COMPANY_NOT_FOUND", 404);
-      if (company.r_type !== ROLES.EMPRESA)
+      if (company.type !== ROLES.EMPRESA)
         return new HttpException("USER_NOT_COMPANY", 400);
 
-      if (user.r_state_Wallet === 0) {
+      if (user.state_Wallet === 0) {
         const duration = await this.youtubeService.getDuration(
           confirmPayUserDto.idVideo
         );
@@ -55,19 +55,19 @@ export class ConfirmPayUserService {
         );
 
         const amountUserDecryptedString =
-          await this.walletService.getDecryptedAmount(user.wallet.r_id);
+          await this.walletService.getDecryptedAmount(user.wallet.id);
         const amountUserDecrypted = parseInt(amountUserDecryptedString);
 
         const remainingAmount = amountUserDecrypted - costTotal;
         if (remainingAmount >= 0) {
           await this.walletService.updateNewAmount(
-            user.wallet.r_id,
+            user.wallet.id,
             remainingAmount
           );
 
           await this.transctionService.create({
-            idUser: user.r_id,
-            type: user.r_type,
+            idUser: user.id,
+            type: user.type,
             amount: costTotal,
           });
         } else {
@@ -75,8 +75,8 @@ export class ConfirmPayUserService {
         }
         await this.playListCompanyService.create({
           idVideo: confirmPayUserDto.idVideo,
-          idCompany: company.r_id,
-          idUser: user.r_id,
+          idCompany: company.id,
+          idUser: user.id,
           order: 0,
           duration: transformTime(duration),
           state: 1,

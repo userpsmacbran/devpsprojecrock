@@ -1,10 +1,10 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { CreatePlayListCompanyDto } from './dto/create-play_list_company.dto';
-import { UpdatePlayListCompanyDto } from './dto/update-play_list_company.dto';
-import { PlayListCompany } from 'src/entities/playListCompany.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/entities/user.entity';
+import { HttpException, Injectable } from "@nestjs/common";
+import { CreatePlayListCompanyDto } from "./dto/create-play_list_company.dto";
+import { UpdatePlayListCompanyDto } from "./dto/update-play_list_company.dto";
+import { PlayListCompany } from "src/entities/playListCompany.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { User } from "src/entities/user.entity";
 
 @Injectable()
 export class PlayListCompanyService {
@@ -29,7 +29,7 @@ export class PlayListCompanyService {
         thumbnailsDefault,
         thumbnailsMedium,
         thumbnailsHigh,
-        fullScreen
+        fullScreen,
       } = createPlayListCompanyDto;
       const playListCompany = await this.playListCompanyRepository.save({
         r_id_video: idVideo,
@@ -43,7 +43,7 @@ export class PlayListCompanyService {
         r_thumbnails_default: thumbnailsDefault,
         r_thumbnails_medium: thumbnailsMedium,
         r_thumbnails_high: thumbnailsHigh,
-        fullScreen: fullScreen
+        fullScreen: fullScreen,
       });
 
       return {
@@ -59,10 +59,10 @@ export class PlayListCompanyService {
         thumbnailsDefault: playListCompany.r_thumbnails_default,
         thumbnailsMedium: playListCompany.r_thumbnails_medium,
         thumbnailsHigh: playListCompany.r_thumbnails_high,
-        fullScreen: playListCompany.fullScreen
+        fullScreen: playListCompany.fullScreen,
       };
     } catch (error) {
-      throw new HttpException('Datos incorrectos', 404);
+      throw new HttpException("Datos incorrectos", 404);
     }
   }
 
@@ -73,18 +73,18 @@ export class PlayListCompanyService {
   async findByIdCompany(id: number) {
     try {
       const company = await this.userRepository.findOne({
-        where: { r_id: id }
+        where: { id },
       });
       if (!company) {
-        throw new HttpException('Compañia no existe', 400);
+        throw new HttpException("Compañia no existe", 400);
       }
 
       const dataRaw = await this.playListCompanyRepository.find({
-        where: { r_id_company: id }
+        where: { r_id_company: id },
       });
 
       if (dataRaw.length < 1) {
-        throw new HttpException('No hay listar por mostrar', 400);
+        throw new HttpException("No hay listar por mostrar", 400);
       }
 
       const cleanData = dataRaw.map((list) => {
@@ -101,7 +101,7 @@ export class PlayListCompanyService {
           thumbnailsDefault: list.r_thumbnails_default,
           thumbnailsMedium: list.r_thumbnails_medium,
           thumbnailsHigh: list.r_thumbnails_high,
-          fullScreen: list.fullScreen
+          fullScreen: list.fullScreen,
         };
       });
 
@@ -110,8 +110,8 @@ export class PlayListCompanyService {
       });
 
       return {
-        message: 'Exito',
-        arrayList: listOrder
+        message: "Exito",
+        arrayList: listOrder,
       };
     } catch (error) {
       throw new HttpException(error, 400);
@@ -120,21 +120,21 @@ export class PlayListCompanyService {
 
   async update(id: number, updatePlayListCompanyDto: UpdatePlayListCompanyDto) {
     const playList = await this.playListCompanyRepository.findOne({
-      where: { r_id: id }
+      where: { r_id: id },
     });
 
     if (playList.r_state === 2) {
-      throw new HttpException('La playlist esta finalizada', 400);
+      throw new HttpException("La playlist esta finalizada", 400);
     }
 
     await this.playListCompanyRepository.update(id, {
-      r_state: updatePlayListCompanyDto.state
+      r_state: updatePlayListCompanyDto.state,
     });
 
     return {
-      message: 'Exito',
+      message: "Exito",
       idPlaylist: id,
-      state: updatePlayListCompanyDto.state
+      state: updatePlayListCompanyDto.state,
     };
   }
 

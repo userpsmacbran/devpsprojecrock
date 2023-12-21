@@ -39,7 +39,7 @@ export class AuthService {
       userObjectRegister = { ...userObjectRegister, password: plaintoHash };
       const userFound = await this.userRepository.findOne({
         where: {
-          r_email: email,
+          email,
         },
       });
       if (userFound) throw new HttpException("USER_EXIST", 400);
@@ -51,28 +51,28 @@ export class AuthService {
 
       if (type === ROLES.EMPRESA || type === ROLES.CLIENTE) {
         let userPayload: any = {
-          r_name: userObjectRegister.name,
-          r_email: userObjectRegister.email,
-          r_pass_word: plaintoHash,
-          r_country: userObjectRegister.country,
-          r_city: userObjectRegister.city,
-          r_adress: userObjectRegister.adress,
-          r_type: type,
-          r_logo: userObjectRegister.logo,
-          r_code_Phone: userObjectRegister.codePhone,
-          r_phone: userObjectRegister.phone,
+          name: userObjectRegister.name,
+          email: userObjectRegister.email,
+          pass_word: plaintoHash,
+          country: userObjectRegister.country,
+          city: userObjectRegister.city,
+          adress: userObjectRegister.adress,
+          type: type,
+          logo: userObjectRegister.logo,
+          code_Phone: userObjectRegister.codePhone,
+          phone: userObjectRegister.phone,
         };
 
         if (type === ROLES.EMPRESA) {
-          userPayload.r_ruc = userObjectRegister.ruc;
+          userPayload.ruc = userObjectRegister.ruc;
         } else {
-          userPayload.r_last_Name = userObjectRegister.lastName;
-          userPayload.r_birth_Date = userObjectRegister.birthDate;
+          userPayload.last_Name = userObjectRegister.lastName;
+          userPayload.birth_Date = userObjectRegister.birthDate;
         }
 
         user = await this.userRepository.save(userPayload);
 
-        const wallet = await this.walletService.createWalletForUser(user.r_id);
+        const wallet = await this.walletService.createWalletForUser(user.id);
         user.wallet = wallet;
         await this.userRepository.save(user);
       }
@@ -83,18 +83,18 @@ export class AuthService {
         type === ROLES.EMPLEADOS
       ) {
         user = await this.userRepository.save({
-          r_name: userObjectRegister.name,
-          r_last_Name: userObjectRegister.lastName,
-          r_email: userObjectRegister.email,
-          r_pass_word: plaintoHash,
-          r_country: userObjectRegister.country,
-          r_city: userObjectRegister.city,
-          r_adress: userObjectRegister.adress,
-          r_type: type,
-          r_logo: userObjectRegister.logo,
-          r_code_Phone: userObjectRegister.codePhone,
-          r_phone: userObjectRegister.phone,
-          r_birth_Date: userObjectRegister.birthDate,
+          name: userObjectRegister.name,
+          last_Name: userObjectRegister.lastName,
+          email: userObjectRegister.email,
+          pass_word: plaintoHash,
+          country: userObjectRegister.country,
+          city: userObjectRegister.city,
+          adress: userObjectRegister.adress,
+          type: type,
+          logo: userObjectRegister.logo,
+          code_Phone: userObjectRegister.codePhone,
+          phone: userObjectRegister.phone,
+          birth_Date: userObjectRegister.birthDate,
         });
       }
 
@@ -114,34 +114,34 @@ export class AuthService {
       const { email, password } = userObjetLogin;
 
       const findUser = await this.userRepository.findOne({
-        where: { r_email: email },
+        where: { email },
       });
       console.log(findUser);
       if (!findUser) throw new HttpException("USER_NOT_FOUND", 404);
 
-      const checkPassword = await compare(password, findUser.r_pass_word);
+      const checkPassword = await compare(password, findUser.pass_word);
 
       if (!checkPassword) throw new HttpException("PASSWORD_INCORRECT", 403);
 
-      const payload = { id: findUser.r_id, name: findUser.r_name };
+      const payload = { id: findUser.id, name: findUser.name };
 
       const token = this.jwtAuthService.sign(payload);
 
       const data = {
         user: {
-          id: findUser.r_id,
-          name: findUser.r_name,
-          lastName: findUser.r_last_Name,
-          email: findUser.r_email,
-          country: findUser.r_city,
-          adress: findUser.r_adress,
-          type: findUser.r_type,
-          logo: findUser.r_logo,
-          codePhone: findUser.r_code_Phone,
-          phone: findUser.r_phone,
-          birthDate: findUser.r_birth_Date,
-          stateWallet: findUser.r_state_Wallet,
-          stateUser: findUser.r_state_User,
+          id: findUser.id,
+          name: findUser.name,
+          lastName: findUser.last_Name,
+          email: findUser.email,
+          country: findUser.city,
+          adress: findUser.adress,
+          type: findUser.type,
+          logo: findUser.logo,
+          codePhone: findUser.code_Phone,
+          phone: findUser.phone,
+          birthDate: findUser.birth_Date,
+          stateWallet: findUser.state_Wallet,
+          stateUser: findUser.state_User,
         },
         token,
       };
