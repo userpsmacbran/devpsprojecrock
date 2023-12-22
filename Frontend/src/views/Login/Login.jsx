@@ -4,6 +4,8 @@ import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { RiAdminFill } from "react-icons/ri";
 import api from "../../api/api";
 import ReCaptcha from "react-google-recaptcha";
+import { useAuth } from "../../auth/AuthProvider";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -12,9 +14,14 @@ function Login() {
   });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const captcha = useRef(null);
 
+  const auth = useAuth();
+  const goTo = useNavigate();
+
+  if (auth.isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -44,10 +51,14 @@ function Login() {
 
     try {
       const response = await api.post("/auth/login", formData);
-      //Guardar el token en algun lado
 
       console.log("Usuario logueado con exito", response.data);
+      if (response.data.token) {
+        auth.saveUser(response.data);
+        goTo("/dashboard");
+      }
     } catch (error) {
+      console.log(error);
       if (typeof error.response.data.message === "string") {
         setError(`* - ${error.response.data.message}`);
       } else if (Array.isArray(error.response.data.message)) {
@@ -65,7 +76,6 @@ function Login() {
   };
   const onChange = () => {
     setError("");
-    console.log(captcha.current.getValue());
   };
   return (
     <section className="bg-slate-200 min-h-screen flex items-center justify-center">
@@ -116,7 +126,7 @@ function Login() {
             <div className="flex justify-center m-2">
               <ReCaptcha
                 ref={captcha}
-                sitekey="6LcK5TgpAAAAANRMGf8VuTTKSJT4e3fUwooM7m5h"
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                 onChange={onChange}
               />
             </div>

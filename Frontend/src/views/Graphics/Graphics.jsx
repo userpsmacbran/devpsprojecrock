@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useAuth } from "../../auth/AuthProvider";
 
-const Dashboard = () => {
+const Graphics = () => {
   const auth = useAuth();
   useEffect(() => {
     auth.checkTokenExpiration();
   }, []);
-  return <div className="text-4xl text-center">Dashboard Administrativo</div>;
+
+  return <div className="text-4xl text-center">Graphics </div>;
 };
 
-export default Dashboard;
+export default Graphics;
