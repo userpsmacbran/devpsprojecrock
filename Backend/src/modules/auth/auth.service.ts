@@ -124,8 +124,9 @@ export class AuthService {
       if (!checkPassword) throw new HttpException("PASSWORD_INCORRECT", 403);
 
       const payload = { id: findUser.id, name: findUser.name };
-
-      const token = this.jwtAuthService.sign(payload);
+      //@author: alejandor morales (Cambie la expiracion del token)
+      const token = this.jwtAuthService.sign(payload, { expiresIn: "1m" }); // Cambiado a 1 minuto
+      const tokenExpiration = new Date(new Date().getTime() + 1 * 60 * 1000); // Cambiado a 1 minuto
 
       const data = {
         user: {
@@ -144,6 +145,7 @@ export class AuthService {
           stateUser: findUser.state_User,
         },
         token,
+        tokenExpiration,
       };
 
       return data;
