@@ -1,23 +1,37 @@
-import { BaseEntity, BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  BeforeInsert,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
-@Entity('r_transac_tions')
+@Entity("transactions")
 export class Transaction extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  r_id: number;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
-  @Column({ type: 'int' })
-  r_id_User: number;
+  @Column({ type: "int" })
+  idUser: number;
 
-  @Column({ type: 'int' })
-  r_amount: number;
+  @Column({ type: "int" })
+  amount: number;
 
-  @Column({ type: 'int' })
-  r_type_T: number;
+  @Column({ type: "int" })
+  type: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
+
+  // @Author: alejandro morales
+  @Column({ type: "int", nullable: true })
+  companyId: number | null;
+
+  @Column({ nullable: true })
+  videoId: string | null;
 
   @BeforeInsert()
   setCreationDate() {
-    this.createdAt = new Date()}
+    this.createdAt = new Date();
+  }
 }

@@ -18,7 +18,7 @@ export class ConfirmPayUserService {
     private readonly youtubeService: YoutubeService,
     private readonly modePlayService: ModeplayService,
     private readonly playListCompanyService: PlayListCompanyService,
-    private readonly transctionService: TransactionsService,
+    private readonly transactionService: TransactionsService,
     private readonly walletService: WalletService
   ) {}
 
@@ -65,10 +65,12 @@ export class ConfirmPayUserService {
             remainingAmount
           );
 
-          await this.transctionService.create({
+          await this.transactionService.createForPayMusic({
             idUser: user.id,
-            type: user.type,
+            type: 0,
             amount: costTotal,
+            companyId: confirmPayUserDto.idCompany,
+            videoId: confirmPayUserDto.idVideo,
           });
         } else {
           return new HttpException("INSUFFICIENT_CREDITS", 500);
