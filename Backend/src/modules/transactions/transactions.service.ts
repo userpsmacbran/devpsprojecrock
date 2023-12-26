@@ -16,18 +16,60 @@ export class TransactionsService {
       const { idUser, amount, type } = createTransactionDto;
 
       const transaction = await this.transactionsRepository.save({
-        r_id_User: idUser,
-        r_amount: amount,
-        r_type_T: type,
+        idUser: idUser,
+        amount: amount,
+        type: type,
       });
 
       return {
-        id: transaction.r_id,
-        idUser: transaction.r_id_User,
-        amount: transaction.r_amount,
-        type: transaction.r_type_T,
+        id: transaction.id,
+        idUser: transaction.idUser,
+        amount: transaction.amount,
+        type: transaction.type,
         date: transaction.createdAt,
       };
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
+  }
+  async createForPayMusic(createTransactionDto: CreateTransactionDto) {
+    try {
+      const { idUser, amount, type, companyId, videoId } = createTransactionDto;
+
+      const transaction = await this.transactionsRepository.save({
+        idUser: idUser,
+        amount: amount,
+        type: type,
+        companyId: companyId,
+        videoId: videoId,
+      });
+
+      return {
+        id: transaction.id,
+        idUser: transaction.idUser,
+        amount: transaction.amount,
+        type: transaction.type,
+        companyId: companyId,
+        videoId: videoId,
+        date: transaction.createdAt,
+      };
+    } catch (error) {
+      throw new HttpException(error, 400);
+    }
+  }
+  async findAllById(idUser: number) {
+    try {
+      const transactions = await this.transactionsRepository.find({
+        where: { idUser: idUser },
+      });
+
+      return transactions.map((transaction) => ({
+        id: transaction.id,
+        idUser: transaction.idUser,
+        amount: transaction.amount,
+        type: transaction.type,
+        date: transaction.createdAt,
+      }));
     } catch (error) {
       throw new HttpException(error, 400);
     }

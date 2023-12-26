@@ -1,12 +1,17 @@
-import { IsNumber } from "class-validator"
+import { IsNumber, IsString } from "class-validator";
+import { User } from "src/entities/user.entity";
 
 export class CreateTransactionDto {
   @IsNumber()
-  idUser: number
+  idUser: number;
 
   @IsNumber()
-  amount: number
+  amount: number;
 
   @IsNumber()
-  type: number
+  type: number;
+
+  companyId?: number;
+
+  videoId?: string;
 }

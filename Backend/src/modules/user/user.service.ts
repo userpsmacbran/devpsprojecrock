@@ -1,10 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "src/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ROLES } from "src/constants";
 
 @Injectable()
 export class UserService {
@@ -12,13 +11,27 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create(createUserDto);
+  findAll(type: number) {
+    if (type === ROLES.EMPRESA) {
+      console.log("Usuario tipo 23(Companies)");
+      return this.userRepository.find({ where: { type } });
+    }
+    if (type === ROLES.CLIENTE) {
+      console.log("Usuario tipo 99(Clients)");
+      return this.userRepository.find({ where: { type } });
+    }
+    if (type === ROLES.ADMIN) {
+      console.log("Usuario tipo 18(Admins)");
+      return this.userRepository.find({ where: { type } });
+    }
+    if (type === ROLES.SUPERADMIN) {
+      console.log("Usuario tipo 19(SuperAdmins)");
+      return this.userRepository.find({ where: { type } });
+    }
+    if (type) {
+      return new HttpException("INVALID QUERY = TYPE", 400);
+    }
 
-    return this.userRepository.save(user);
-  }
-
-  findAll() {
     return this.userRepository.find();
   }
 
@@ -26,7 +39,7 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUserDto: any) {
     return `This action updates a #${id} user`;
   }
 
