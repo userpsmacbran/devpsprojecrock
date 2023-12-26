@@ -6,7 +6,12 @@ const Dashboard = () => {
   useEffect(() => {
     auth.checkTokenExpiration();
   }, []);
-  return <div className="text-4xl text-center">Dashboard Administrativo</div>;
+
+  return (
+    <section className="text-4xl text-center">
+      <h2>Dashboard Administrativo</h2>
+    </section>
+  );
 };
 
 export default Dashboard;
