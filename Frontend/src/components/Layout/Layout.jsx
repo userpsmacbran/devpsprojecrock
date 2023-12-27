@@ -17,10 +17,12 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-
+import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 const drawerWidth = 240;
 
 function Layout(props) {
+  const { t } = useTranslation();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -29,10 +31,9 @@ function Layout(props) {
   };
 
   const menuItems = [
-    { id: "dashboard", text: "Dashboard", icon: <InboxIcon /> },
-    { id: "users", text: "Users", icon: <MailIcon /> },
-    { id: "graphics", text: "Graphics", icon: <InboxIcon /> },
-    { id: "coins", text: "Coins", icon: <MailIcon /> },
+    { id: "dashboard", translationKey: "menu_dashboard", icon: <InboxIcon /> },
+    { id: "users", translationKey: "menu_users", icon: <MailIcon /> },
+    { id: "graphics", translationKey: "menu_graphics", icon: <InboxIcon /> },
   ];
 
   const drawer = (
@@ -48,7 +49,7 @@ function Layout(props) {
           >
             <ListItemButton>
               <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText primary={t(item.translationKey)} />
             </ListItemButton>
           </Link>
         ))}
@@ -63,7 +64,7 @@ function Layout(props) {
           >
             <ListItemButton>
               <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText primary={t(item.translationKey)} />
             </ListItemButton>
           </Link>
         ))}
@@ -95,9 +96,9 @@ function Layout(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Navbar Content Here
-          </Typography>
+          <Box sx={{ marginLeft: "auto" }}>
+            <LanguageSwitcher />
+          </Box>
         </Toolbar>
       </AppBar>
       <Box
