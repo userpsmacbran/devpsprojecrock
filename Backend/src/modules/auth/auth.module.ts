@@ -8,11 +8,13 @@ import { ConfigService } from "@nestjs/config";
 import { ModePlay } from "src/entities/modePlay.entity";
 import { ModeplayModule } from "../modeplay/modeplay.module";
 import { WalletModule } from "../wallet/wallet.module";
+import { EmailModule } from "../email/email.module";
 
 const configService = new ConfigService();
 
 @Module({
   imports: [
+    EmailModule,
     WalletModule,
     ModeplayModule,
     TypeOrmModule.forFeature([User]),

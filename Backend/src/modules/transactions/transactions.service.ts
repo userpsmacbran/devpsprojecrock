@@ -57,6 +57,7 @@ export class TransactionsService {
       throw new HttpException(error, 400);
     }
   }
+
   async findAllById(idUser: number) {
     try {
       const transactions = await this.transactionsRepository.find({
