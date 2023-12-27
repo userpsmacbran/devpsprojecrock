@@ -34,8 +34,8 @@ i18n.use(initReactI18next).init({
       },
     },
   },
-  lng: storedLanguage || "en",
-  fallbackLng: "en",
+  lng: storedLanguage || "us",
+  fallbackLng: "us",
   interpolation: {
     escapeValue: false,
   },
