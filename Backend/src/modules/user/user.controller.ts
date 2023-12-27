@@ -25,12 +25,12 @@ export class UserController {
     return { message: "ok", data: users };
   }
 
-  @UseGuards(AuthGuard)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.userService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateUserDto: any) {
     return this.userService.update(+id, updateUserDto);

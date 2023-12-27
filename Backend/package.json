@@ -33,6 +33,7 @@
     "dotenv": "^16.3.1",
     "morgan": "^1.10.0",
     "nestjs-seeder": "^0.3.2",
+    "nodemailer": "^6.9.7",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",

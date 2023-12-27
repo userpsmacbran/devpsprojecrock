@@ -12,6 +12,7 @@ import { WalletService } from "../wallet/wallet.service";
 import { isValidDateFormat } from "../../utils/isValidDateFormat";
 
 import { Logger } from "@nestjs/common";
+import { EmailService } from "../email/email.service";
 const logger = new Logger("MyApp");
 
 @Injectable()
@@ -20,7 +21,8 @@ export class AuthService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly modePlayService: ModeplayService,
     private readonly walletService: WalletService,
-    private jwtAuthService: JwtService
+    private jwtAuthService: JwtService,
+    private readonly emailService: EmailService
   ) {}
 
   async register(userObjectRegister: RegisterAuthDtoBase) {
@@ -98,6 +100,18 @@ export class AuthService {
         });
       }
 
+      if (type === ROLES.CLIENTE) {
+        const verificationCode = this.generateVerificationCode();
+        await this.emailService.sendEmail(
+          email,
+          "Verificacion de Cuenta",
+          `<div><h1>Tu codigo de verificacion para tu cuenta es: ${verificationCode} </h1></div>`
+        );
+
+        user.verificationCode = verificationCode;
+        await this.userRepository.save(user);
+      }
+
       return {
         message: "ok",
         data: {
@@ -107,6 +121,10 @@ export class AuthService {
     } catch (error) {
       throw new HttpException(error, 400);
     }
+  }
+
+  private generateVerificationCode(): string {
+    return Math.floor(1000 + Math.random() * 9000).toString();
   }
 
   async login(userObjetLogin: LoginAuthDto) {
@@ -151,6 +169,29 @@ export class AuthService {
       return data;
     } catch (error) {
       throw new HttpException(error, 400);
+    }
+  }
+
+  async verifyAccountUser(id: number, code: string) {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) return new HttpException("USER_NOT_FOUND", 404);
+
+      if (user.type !== ROLES.CLIENTE) {
+        return new HttpException("USER_IS_NOT_A_CLIENT_TYPE", 400);
+      }
+      if (user.isVerified) {
+        return new HttpException("USER_ALREADY_VERIFIED", 400);
+      }
+      if (user.verificationCode !== code)
+        return new HttpException("CODE_INCORRECT", 400);
+
+      if (user && user.verificationCode === code) {
+        await this.userRepository.update(user.id, { isVerified: true });
+        return { message: "ok", data: "Email verification successfully" };
+      }
+    } catch (error) {
+      return new HttpException("SERVER_ERROR", 500);
     }
   }
 }

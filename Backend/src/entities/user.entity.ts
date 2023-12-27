@@ -85,4 +85,10 @@ export class User extends BaseEntity {
   @OneToOne(() => Owner, (owner) => owner.user)
   @JoinColumn()
   owner: Owner;
+
+  @Column({ default: false, nullable: true })
+  isVerified: boolean;
+
+  @Column({ nullable: true })
+  verificationCode: string;
 }

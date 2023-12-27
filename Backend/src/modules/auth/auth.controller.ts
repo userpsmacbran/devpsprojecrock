@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LoginAuthDto } from "./dto/login-auth.dto";
@@ -23,5 +24,13 @@ export class AuthController {
   @Post("login")
   loginUser(@Body() userObjetLogin: LoginAuthDto) {
     return this.authService.login(userObjetLogin);
+  }
+
+  @Get("verify-account")
+  async verifyAccountUser(
+    @Query("id") id: number,
+    @Query("code") code: string
+  ) {
+    return this.authService.verifyAccountUser(id, code);
   }
 }
