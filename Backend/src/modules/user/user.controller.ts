@@ -18,10 +18,30 @@ import { parse } from "path";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // En el controlador
   @Get()
   async findAll(@Query() query: QueryUserDto) {
-    const { type } = query;
-    const users = await this.userService.findAll(parseInt(type));
+    const { type, country, city, state_User } = query;
+
+    const parsedType = type
+      ? typeof type === "string"
+        ? parseInt(type, 10)
+        : type
+      : undefined;
+    const parsedStateUser = state_User
+      ? typeof state_User === "string"
+        ? parseInt(state_User, 10)
+        : state_User
+      : undefined;
+
+    const options = {
+      type: parsedType,
+      country,
+      city,
+      state_User: parsedStateUser,
+    };
+
+    const users = await this.userService.findAll(options);
     return { message: "ok", data: users };
   }
 

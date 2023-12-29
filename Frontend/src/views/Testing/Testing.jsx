@@ -1,180 +1,172 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
-import MenuIcon from "@mui/icons-material/Menu";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import { RiAdminFill, RiEyeFill } from "react-icons/ri";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Image from "/logo.jpg";
+import ReCaptcha from "react-google-recaptcha";
+import { useRef } from "react";
 
-const drawerWidth = 240;
-
-function ResponsiveDrawer(props) {
-  const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const drawer = (
-    <div>
-      <Toolbar />
-      <Divider />
-      <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
-
-  // Remove this const when copying and pasting into your project.
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+function Testing() {
+  const captcha = useRef(null);
 
   return (
-    <Box sx={{ display: "flex" }} className="bg-blue-500">
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+    <main className="flex h-screen">
+      <div className="w-full lg:w-2/6 flex flex-col items-center justify-center bg-[#555CB3] shadow-[0_0px_20px_10px_rgba(0,0,0,0.6)] z-10">
+        <div className="w-8/12">
+          <div className="flex justify-center items-center text-4xl space-x-4 mb-10">
+            <img src={Image} className="w-auto h-16 text-white" />
+            <h2
+              style={{ textShadow: "2px 2px 1px #B45946", color: "white" }}
+              className="font-semibold text-white text-3xl tracking-widest text-shadow-lg"
+            >
+              PSROCKOLA
+            </h2>
+          </div>
+          <p className="text-white text-lg my-4">¡Empecemos!</p>
+          <form className="mt-6">
+            <div className="mb-6">
+              <TextField
+                id="name"
+                name="name"
+                type="name"
+                label="Nombre"
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ffffff", // color del borde predeterminado
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#ffffff", // color del borde al pasar el mouse
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#ffffff", // color del borde cuando está enfocado
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#ffffff", // color de la etiqueta predeterminado
+                    "&.Mui-focused": {
+                      color: "#ffffff", // color del label cuando está enfocado
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#ffffff", // color del texto
+                  },
+                }}
+              />
+            </div>
+            <div className="mb-6">
+              <TextField
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ffffff", // color del borde predeterminado
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#ffffff", // color del borde al pasar el mouse
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#ffffff", // color del borde cuando está enfocado
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#ffffff", // color de la etiqueta predeterminado
+                    "&.Mui-focused": {
+                      color: "#ffffff", // color del label cuando está enfocado
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#ffffff", // color del texto
+                  },
+                }}
+              />
+            </div>
+            <div className="relative mb-6">
+              <TextField
+                id="password"
+                name="password"
+                type="password"
+                label="Contraseña"
+                variant="outlined"
+                fullWidth
+                size="small"
+                InputProps={{
+                  endAdornment: (
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-800"
+                    >
+                      {<RiEyeFill />}
+                    </button>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ffffff", // color del borde predeterminado
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#ffffff", // color del borde al pasar el mouse
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#ffffff", // color del borde cuando está enfocado
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#ffffff", // color de la etiqueta predeterminado
+                    "&.Mui-focused": {
+                      color: "#ffffff", // color del label cuando está enfocado
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#ffffff", // color del texto
+                  },
+                }}
+              />
+            </div>
+            <div className="flex justify-center my-6">
+              <ReCaptcha
+                ref={captcha}
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              />
+            </div>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{
+                bgcolor: "#F66E0C",
+                borderRadius: "20px",
+                height: "40px",
+                "&:hover": {
+                  bgcolor: "#FF6B00",
+                },
+              }}
+            >
+              INICIAR
+            </Button>
+          </form>
+        </div>
+      </div>
+      <div
+        className="lg:w-4/6 bg-white"
+        style={{
+          backgroundImage: `url(/background_login.png)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Responsive drawer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-        <Toolbar />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          quisque non tellus. Convallis convallis tellus id interdum velit
-          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
-          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
-          faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
-          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
-          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
-          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
-          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-          morbi tristique senectus et. Adipiscing elit duis tristique
-          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
-      </Box>
-    </Box>
+      ></div>
+    </main>
   );
 }
 
-ResponsiveDrawer.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
-  window: PropTypes.func,
-};
-
-export default ResponsiveDrawer;
+export default Testing;

@@ -86,9 +86,6 @@ export class User extends BaseEntity {
   @JoinColumn()
   owner: Owner;
 
-  @Column({ default: false, nullable: true })
-  isVerified: boolean;
-
   @Column({ nullable: true })
   verificationCode: string;
 }

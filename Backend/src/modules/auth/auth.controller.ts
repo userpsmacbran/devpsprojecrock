@@ -33,4 +33,14 @@ export class AuthController {
   ) {
     return this.authService.verifyAccountUser(id, code);
   }
+
+  @Get("active-account/:id")
+  async activeAccountCompany(@Param("id") id: number) {
+    return this.authService.activeAccountCompany(id);
+  }
+
+  @Get("resend-code/:id")
+  async resendCode(@Param("id") id: number) {
+    return this.authService.resendCode(id);
+  }
 }

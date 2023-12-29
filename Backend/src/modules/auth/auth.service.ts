@@ -6,7 +6,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/user.entity";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { NAME_MODEPLAY, ROLES } from "src/constants";
+import { NAME_MODEPLAY, ROLES, STATES } from "src/constants";
 import { ModeplayService } from "../modeplay/modeplay.service";
 import { WalletService } from "../wallet/wallet.service";
 import { isValidDateFormat } from "../../utils/isValidDateFormat";
@@ -44,6 +44,7 @@ export class AuthService {
           email,
         },
       });
+
       if (userFound) throw new HttpException("USER_EXIST", 400);
       let user: User;
 
@@ -134,11 +135,20 @@ export class AuthService {
       const findUser = await this.userRepository.findOne({
         where: { email },
       });
-      console.log(findUser);
       if (!findUser) throw new HttpException("USER_NOT_FOUND", 404);
 
-      const checkPassword = await compare(password, findUser.pass_word);
+      //Validacion para que no deje loguear si el estado de cuenta no es activo = 1.
+      if (
+        findUser.type === ROLES.EMPRESA ||
+        findUser.type === ROLES.CLIENTE ||
+        findUser.type === ROLES.EMPLEADOS
+      ) {
+        if (findUser.state_User !== STATES.ACTIVO) {
+          return new HttpException("USER_IS_NOT_ACTIVE", 400);
+        }
+      }
 
+      const checkPassword = await compare(password, findUser.pass_word);
       if (!checkPassword) throw new HttpException("PASSWORD_INCORRECT", 403);
 
       const payload = { id: findUser.id, name: findUser.name };
@@ -180,18 +190,56 @@ export class AuthService {
       if (user.type !== ROLES.CLIENTE) {
         return new HttpException("USER_IS_NOT_A_CLIENT_TYPE", 400);
       }
-      if (user.isVerified) {
+      if (user.state_User === STATES.ACTIVO) {
         return new HttpException("USER_ALREADY_VERIFIED", 400);
       }
       if (user.verificationCode !== code)
         return new HttpException("CODE_INCORRECT", 400);
 
       if (user && user.verificationCode === code) {
-        await this.userRepository.update(user.id, { isVerified: true });
+        await this.userRepository.update(user.id, {
+          state_User: STATES.ACTIVO,
+        });
         return { message: "ok", data: "Email verification successfully" };
       }
     } catch (error) {
       return new HttpException("SERVER_ERROR", 500);
     }
+  }
+
+  async resendCode(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) return new HttpException("USER_NOT_FOUND", 404);
+    if (user.type !== ROLES.CLIENTE)
+      return new HttpException("USER_IS_NOT_A_CLIENT_TYPE", 400);
+    if (user.state_User === STATES.ACTIVO)
+      return new HttpException("USER_ALREADY_VERIFIED", 400);
+
+    await this.emailService.sendEmail(
+      user.email,
+      "Verificacion de Cuenta - Reenvio de codigo",
+      `<div><h1>Tu codigo de verificacion para tu cuenta es: ${user.verificationCode} </h1></div>`
+    );
+
+    return {
+      message: "ok",
+      data: "Code resend successfully",
+    };
+  }
+  async activeAccountCompany(id: number) {
+    const company = await this.userRepository.findOne({ where: { id } });
+    if (!company) return new HttpException("COMPANY_NOT_FOUND", 404);
+    if (company.type !== ROLES.EMPRESA)
+      return new HttpException("USER_IS_NOT_A_COMPANY_TYPE", 400);
+    if (company.state_User === STATES.ACTIVO)
+      return new HttpException("COMPANY_ALREADY_VERIFIED", 400);
+
+    company.state_User = STATES.ACTIVO;
+    await this.userRepository.save(company);
+
+    return {
+      message: "ok",
+      data: "Company account successfully activated",
+    };
   }
 }

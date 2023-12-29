@@ -27,11 +27,22 @@ function LanguageSelector() {
         value={i18n.language}
         onChange={handleChangeLanguage}
         variant="standard"
+        disableUnderline
+        sx={{
+          "& .MuiSelect-select": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiSelect-icon": {
+            color: "black",
+          },
+          "& .MuiSelect-focus": {
+            backgroundColor: "transparent",
+          },
+        }}
       >
         {languages.map((lang) => (
           <MenuItem key={lang.code} value={lang.code}>
-            <Flag code={lang.code} className="text-gray-800 mx-2 w-6 h-6" />
-            {lang.name}
+            <Flag code={lang.code} className="text-gray-800 mx-2 w-8 h-8" />
           </MenuItem>
         ))}
       </Select>
