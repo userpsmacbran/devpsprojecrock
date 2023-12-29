@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./views/Login/Login";
 import { AuthProvider } from "./auth/AuthProvider";
 import Graphics from "./views/Graphics/Graphics";
-import Dashboard from "./views/RegisterCompany/RegisterCompany";
+import Dashboard from "./views/Dashboard/Dashboard";
 import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout/Layout";
@@ -15,6 +15,7 @@ function App() {
         {/* Rutas públicas */}
         <Route path="/" element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
+          <Route path="/testing" element={<ResponsiveDrawer />} />
         </Route>
 
         {/* Rutas protegidas */}
@@ -25,7 +26,6 @@ function App() {
             <Route path="/graphics" element={<Graphics />} />
             <Route path="*" element={<div> Page not found</div>} />
           </Route>
-          <Route path="/testing" element={<ResponsiveDrawer />} />
         </Route>
       </Routes>
     </AuthProvider>
