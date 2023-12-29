@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
-
+import { Repository, SelectQueryBuilder } from "typeorm";
+import { ILike } from "typeorm";
 import { User } from "src/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ROLES } from "src/constants";
@@ -11,28 +11,30 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  findAll(type: number) {
-    if (type === ROLES.EMPRESA) {
-      console.log("Usuario tipo 23(Companies)");
-      return this.userRepository.find({ where: { type } });
-    }
-    if (type === ROLES.CLIENTE) {
-      console.log("Usuario tipo 99(Clients)");
-      return this.userRepository.find({ where: { type } });
-    }
-    if (type === ROLES.ADMIN) {
-      console.log("Usuario tipo 18(Admins)");
-      return this.userRepository.find({ where: { type } });
-    }
-    if (type === ROLES.SUPERADMIN) {
-      console.log("Usuario tipo 19(SuperAdmins)");
-      return this.userRepository.find({ where: { type } });
-    }
-    if (type) {
-      return new HttpException("INVALID QUERY = TYPE", 400);
-    }
-
-    return this.userRepository.find();
+  async findAll(options: {
+    type?: number;
+    country?: string;
+    city?: string;
+    state_User?: number;
+  }): Promise<User[]> {
+    return this.userRepository
+      .createQueryBuilder("user")
+      .where((qb: SelectQueryBuilder<User>) => {
+        Object.entries(options).forEach(([key, value]) => {
+          if (value !== undefined) {
+            if (key === "country" || key === "city") {
+              qb.andWhere(`user.${key} ILIKE :${key}`, { [key]: `%${value}%` });
+            } else if (key === "state_User") {
+              qb.andWhere(`user.state_User = :state_User`, {
+                state_User: value,
+              });
+            } else {
+              qb.andWhere(`user.${key} = :${key}`, { [key]: value });
+            }
+          }
+        });
+      })
+      .getMany();
   }
 
   findOne(id: number) {
