@@ -16,6 +16,7 @@ import { TransactionsModule } from "./modules/transactions/transactions.module";
 import { CryptoModule } from "./modules/crypto/crypto.module";
 import { OwnerModule } from "./modules/owner/owner.module";
 import { WalletModule } from "./modules/wallet/wallet.module";
+import { DashboardModule } from "./modules/dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { WalletModule } from "./modules/wallet/wallet.module";
     CryptoModule,
     OwnerModule,
     WalletModule,
+    DashboardModule,
   ],
   providers: [
     {
