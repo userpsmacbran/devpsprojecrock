@@ -96,39 +96,6 @@ function Login() {
           <form className="mt-6" onSubmit={handleSubmit}>
             <div className="mb-6">
               <TextField
-                id="name"
-                name="name"
-                type="name"
-                label="Nombre"
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#ffffff", // color del borde predeterminado
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#ffffff", // color del borde al pasar el mouse
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#ffffff", // color del borde cuando está enfocado
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "#ffffff", // color de la etiqueta predeterminado
-                    "&.Mui-focused": {
-                      color: "#ffffff", // color del label cuando está enfocado
-                    },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#ffffff", // color del texto
-                  },
-                }}
-              />
-            </div>
-            <div className="mb-6">
-              <TextField
                 id="email"
                 name="email"
                 type="email"

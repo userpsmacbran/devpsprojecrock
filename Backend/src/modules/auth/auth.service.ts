@@ -144,7 +144,7 @@ export class AuthService {
         findUser.type === ROLES.EMPLEADOS
       ) {
         if (findUser.state_User !== STATES.ACTIVO) {
-          return new HttpException("USER_IS_NOT_ACTIVE", 400);
+          throw new HttpException("USER_IS_NOT_ACTIVE", 400);
         }
       }
 
