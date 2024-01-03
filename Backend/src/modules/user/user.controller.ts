@@ -13,15 +13,15 @@ import { UserService } from "./user.service";
 import { AuthGuard } from "../auth/jwt.strategy";
 import { QueryUserDto } from "./dto/query-user.dto";
 import { parse } from "path";
+import { ChangeStateDto } from "./dto/change-state.dto";
 
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // En el controlador
   @Get()
   async findAll(@Query() query: QueryUserDto) {
-    const { type, country, city, state_User } = query;
+    const { type, country, city, state_User, skip, take } = query;
 
     const parsedType = type
       ? typeof type === "string"
@@ -41,13 +41,21 @@ export class UserController {
       state_User: parsedStateUser,
     };
 
-    const users = await this.userService.findAll(options);
+    const users = await this.userService.findAll(options, {
+      take,
+      skip,
+    });
     return { message: "ok", data: users };
   }
 
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.userService.findOne(+id);
+  }
+
+  @Patch("change-state/:id")
+  changeState(@Param("id") id: number, @Body() body: ChangeStateDto) {
+    return this.userService.changeState(id, body);
   }
 
   @UseGuards(AuthGuard)

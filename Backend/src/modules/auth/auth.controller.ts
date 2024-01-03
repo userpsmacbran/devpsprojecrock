@@ -43,4 +43,6 @@ export class AuthController {
   async resendCode(@Param("id") id: number) {
     return this.authService.resendCode(id);
   }
+
+ 
 }

@@ -18,4 +18,7 @@ export class QueryUserDto {
   @IsOptional()
   @IsString({ message: "Invalid city, must be a string." })
   city?: string;
+
+  skip: number;
+  take: number;
 }
