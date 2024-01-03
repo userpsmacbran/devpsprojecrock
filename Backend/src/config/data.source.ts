@@ -13,7 +13,7 @@ const configService = new ConfigService();
 //host: "localhost",
 //port: 5432,
 //username: "postgres",
-//password: "1234",
+//password: "Ale31110364",
 //database: "rockola",
 //entities: [__dirname + "/../**/*.entity{.ts,.js}"],
 //synchronize: true,

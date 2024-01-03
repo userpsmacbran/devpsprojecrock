@@ -3,13 +3,13 @@ import Login from "./views/Login/Login";
 import { AuthProvider } from "./auth/AuthProvider";
 import Graphics from "./views/Graphics/Graphics";
 import Dashboard from "./views/Dashboard/Dashboard";
-import PublicRoute from "./components/PublicRoute";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout/Layout";
 import ResponsiveDrawer from "./views/Testing/Testing";
 import Clients from "./views/users/clients/Clients";
 import Companies from "./views/users/companies/Companies";
 import Moderators from "./views/Users/Moderators/Moderators";
+import PublicRoute from "./components/Routes/PublicRoute";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
 function App() {
   return (

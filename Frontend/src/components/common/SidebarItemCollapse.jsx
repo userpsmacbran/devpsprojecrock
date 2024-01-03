@@ -10,7 +10,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import List from "@mui/material/List";
 
-function SidebarItemCollapse({ item, t }) {
+function SidebarItemCollapse({ item, t, handleDrawerToggle }) {
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
@@ -59,12 +59,14 @@ function SidebarItemCollapse({ item, t }) {
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List>
           {item.subItems.map((subItem, index) => (
-            <Link to={`${item.id}/${subItem.id}`} key={index}>
+            <Link to={`${item.id}/${subItem.id}`} key={index} onClick={handleDrawerToggle}>
               <ListItemButton
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  marginLeft: "30px",
+                  justifyContent: "start",
+                  alignItems: "start",
+                  marginLeft: "50px",
                   marginRight: "30px",
                   "&:hover": {
                     backgroundColor: "#8087DF",

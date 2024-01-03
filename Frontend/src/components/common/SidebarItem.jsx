@@ -5,9 +5,13 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Box from "@mui/material/Box";
 
-function SidebarItem({ item, t }) {
+function SidebarItem({ item, t, handleDrawerToggle }) {
   return (
-    <Link to={`/${item.id}`} key={item.id}>
+    <Link
+      to={`/${item.id}`}
+      key={item.id}
+      onClick={item.subItems ? null : handleDrawerToggle}
+    >
       <ListItemButton
         sx={{
           display: "flex",
