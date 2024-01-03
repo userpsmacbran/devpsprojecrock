@@ -3,18 +3,21 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Avatar from "@mui/material/Avatar";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import PersonIcon from "@mui/icons-material/Person";
+import BusinessIcon from "@mui/icons-material/Business";
+import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 
 function Cards({ data }) {
   const { t } = useTranslation();
 
   const cards = [
-    { title: "Sales", amount: data.sales || 0 },
-    { title: "Clients", amount: data.clients || 0 },
-    { title: "Companies", amount: data.clients || 0 },
-    { title: "Videos", amount: data.videos || 0 },
+    { title: "Sales", amount: data.sales || 0, icon: <AttachMoneyIcon /> },
+    { title: "Clients", amount: data.clients || 0, icon: <PersonIcon /> },
+    { title: "Companies", amount: data.clients || 0, icon: <BusinessIcon /> },
+    { title: "Videos", amount: data.videos || 0, icon: <VideoLibraryIcon /> },
   ];
   return (
     <Grid container spacing={2}>
@@ -23,7 +26,7 @@ function Cards({ data }) {
           <Card>
             <CardContent sx={{ textAlign: "left" }}>
               <Avatar sx={{ marginY: "10px" }}>
-                <MonetizationOnIcon />
+                {card.icon || <PersonIcon />}
               </Avatar>
               <Typography variant="h6" color="gray">
                 {t(`dashboard_${card.title.toLowerCase()}`)}

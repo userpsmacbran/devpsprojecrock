@@ -53,7 +53,6 @@ function Login() {
 
     try {
       const response = await api.post("/auth/login", formData);
-
       console.log("Usuario logueado con exito", response.data);
       if (response.data.token) {
         auth.saveUser(response.data);

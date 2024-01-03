@@ -5,6 +5,7 @@ import Cards from "../../components/Dashboard/Cards";
 import Graphics from "../../components/Dashboard/Graphics";
 import LastOrders from "../../components/Dashboard/LastOrders";
 import api from "../../api/api";
+import Loader from "../../components/Loaders/Loader";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -36,11 +37,9 @@ const Dashboard = () => {
   }, [auth]);
 
   return (
-    <section className="text-3xl">
+    <section>
       {loading ? (
-        <div className="flex justify-center items-center mt-8">
-          <div className="border-t-4 border-blue-600 border-solid animate-spin rounded-full h-24 w-24"></div>
-        </div>
+        <Loader />
       ) : error ? (
         <div className="flex justify-center items-center text-red-500 text-center lg:bg-red-100 rounded-md py-6 px-2 mt-  ">
           <p>{error}</p>
