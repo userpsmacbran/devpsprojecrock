@@ -4,7 +4,7 @@ import api from "../../api/api";
 import ReCaptcha from "react-google-recaptcha";
 import { useAuth } from "../../auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router-dom";
-import Image from "/logo.jpg";
+import Image from "/logo.png";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 

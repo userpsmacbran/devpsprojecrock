@@ -61,4 +61,10 @@ export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
   @IsEnum(STATES)
   @IsOptional()
   stateUser: STATES;
+
+  @IsString()
+  postalCode: string;
+
+  @IsString()
+  state: string;
 }

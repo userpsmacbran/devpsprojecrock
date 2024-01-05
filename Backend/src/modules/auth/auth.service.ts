@@ -58,12 +58,14 @@ export class AuthService {
           email: userObjectRegister.email,
           pass_word: plaintoHash,
           country: userObjectRegister.country,
+          state: userObjectRegister.state,
           city: userObjectRegister.city,
           adress: userObjectRegister.adress,
           type: type,
           logo: userObjectRegister.logo,
           code_Phone: userObjectRegister.codePhone,
           phone: userObjectRegister.phone,
+          postalCode: userObjectRegister.postalCode,
         };
 
         if (type === ROLES.EMPRESA) {
@@ -154,8 +156,9 @@ export class AuthService {
       const payload = { id: findUser.id, name: findUser.name };
       //@author: alejandor morales (Cambie la expiracion del token)
       const token = this.jwtAuthService.sign(payload, { expiresIn: "1h" }); // Cambiado a 1 hora
-      const tokenExpiration = new Date(new Date().getTime() + 1 * 60 * 60 * 1000); // Cambiado a 1 hora
-      
+      const tokenExpiration = new Date(
+        new Date().getTime() + 1 * 60 * 60 * 1000
+      ); // Cambiado a 1 hora
 
       const data = {
         user: {

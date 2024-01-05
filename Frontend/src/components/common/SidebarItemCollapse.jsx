@@ -10,7 +10,13 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import List from "@mui/material/List";
 
-function SidebarItemCollapse({ item, t, handleDrawerToggle }) {
+function SidebarItemCollapse({
+  item,
+  t,
+  handleDrawerToggle,
+  handleItemClick,
+  activeItem,
+}) {
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
@@ -59,8 +65,14 @@ function SidebarItemCollapse({ item, t, handleDrawerToggle }) {
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List>
           {item.subItems.map((subItem, index) => (
-            <Link to={`${item.id}/${subItem.id}`} key={index} onClick={handleDrawerToggle}>
+            <Link
+              to={`${item.id}/${subItem.id}`}
+              key={index}
+              onClick={handleDrawerToggle}
+            >
               <ListItemButton
+                selected={subItem.id === activeItem}
+                onClick={() => handleItemClick(subItem.id)}
                 sx={{
                   display: "flex",
                   flexDirection: "column",
@@ -68,13 +80,28 @@ function SidebarItemCollapse({ item, t, handleDrawerToggle }) {
                   alignItems: "start",
                   marginLeft: "50px",
                   marginRight: "30px",
+                  color: "white",
                   "&:hover": {
                     backgroundColor: "#8087DF",
                     borderRadius: "60px",
+                    fontWeight: "bold",
                   },
                   "&:not(:hover)": {
                     backgroundColor: "transparent",
                     borderRadius: "40px",
+                    fontWeight: "bold",
+                  },
+                  "&.Mui-selected": {
+                    backgroundColor: "#f0f0f0",
+                    color: "#555CB3",
+                    fontWeight: "bold",
+                    borderRadius: "60px",
+                  },
+                  "&.Mui-selected:hover": {
+                    backgroundColor: "#f0f0f0",
+                    color: "#555CB3",
+                    fontWeight: "bold",
+                    borderRadius: "60px",
                   },
                 }}
               >
@@ -85,11 +112,16 @@ function SidebarItemCollapse({ item, t, handleDrawerToggle }) {
                   }}
                   className="space-x-4"
                 >
-                  <ListItemIcon sx={{ color: "white", minWidth: 0 }}>
+                  <ListItemIcon
+                    sx={{
+                      color: subItem.id === activeItem ? "#555CB3" : "white",
+                      minWidth: 0,
+                    }}
+                  >
                     {subItem.icon}
                   </ListItemIcon>
                   <ListItemText
-                    sx={{ color: "white", ml: 0 }}
+                    sx={{ ml: 0 }}
                     primary={t(subItem.translationKey)}
                   />
                 </Box>

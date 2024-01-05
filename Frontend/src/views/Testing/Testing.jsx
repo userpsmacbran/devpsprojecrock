@@ -1,7 +1,7 @@
 import { RiAdminFill, RiEyeFill } from "react-icons/ri";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Image from "/logo.jpg";
+import Image from "/logo.png";
 import ReCaptcha from "react-google-recaptcha";
 import { useRef } from "react";
 
