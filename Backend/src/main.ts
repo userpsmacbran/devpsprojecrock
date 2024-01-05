@@ -10,7 +10,7 @@ async function bootstrap() {
   app.setGlobalPrefix("api");
 
   app.use(morgan("dev"));
-
+  console.log("this is a test");
   app.enableCors(CORS);
   console.log("Hola");
   const reflector = app.get(Reflector);
