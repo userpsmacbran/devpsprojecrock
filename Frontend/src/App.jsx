@@ -5,9 +5,9 @@ import Graphics from "./views/Graphics/Graphics";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Layout from "./components/Layout/Layout";
 import ResponsiveDrawer from "./views/Testing/Testing";
-import Clients from "./views/users/clients/Clients";
-import Companies from "./views/users/companies/Companies";
+import Clients from "./views/Users/clients/Clients";
 import Moderators from "./views/Users/Moderators/Moderators";
+import Companies from "./views/Users/Companies/Companies";
 import PublicRoute from "./components/Routes/PublicRoute";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 

@@ -13,11 +13,19 @@ import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SidebarItemLogout from "./SidebarItemLogout";
 import { useAuth } from "../../auth/AuthProvider";
+import { useState } from "react";
 
 function Sidebar({ handleDrawerToggle }) {
   const { t } = useTranslation();
 
   const auth = useAuth();
+
+  const [activeItem, setActiveItem] = useState("dashboard"); // Nuevo estado para el elemento activo
+  const handleItemClick = (itemId) => {
+    console.log(itemId);
+    setActiveItem(itemId);
+    handleDrawerToggle();
+  };
 
   const handleLogout = () => {
     auth.logout();
@@ -67,7 +75,7 @@ function Sidebar({ handleDrawerToggle }) {
   return (
     <div className="bg-[#555CB3] h-screen flex flex-col">
       <div className="flex mx-8 justify-center items-center space-x-2 my-8">
-        <img src="/logo.jpg" className="h-12 w-12" alt="" />
+        <img src="/logo.png" className="h-12 w-12" alt="" />
         <h2
           style={{ textShadow: "2px 2px 1px #B45946", color: "white" }}
           className="font-semibold text-white text-xl tracking-widest text-shadow-lg"
@@ -84,6 +92,8 @@ function Sidebar({ handleDrawerToggle }) {
               t={t}
               key={index}
               handleDrawerToggle={handleDrawerToggle}
+              handleItemClick={handleItemClick}
+              activeItem={activeItem}
             />
           ) : (
             <SidebarItem
@@ -91,6 +101,8 @@ function Sidebar({ handleDrawerToggle }) {
               t={t}
               key={index}
               handleDrawerToggle={handleDrawerToggle}
+              handleItemClick={handleItemClick}
+              activeItem={activeItem}
             />
           )
         )}

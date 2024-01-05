@@ -6,7 +6,7 @@ import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../common/Sidebar";
-import AppBarComponent from "../Common/AppBar";
+import AppBarComponent from "../common/AppBar";
 
 const drawerWidth = 240;
 
