@@ -88,4 +88,10 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   verificationCode: string;
+
+  @Column({ nullable: true })
+  postalCode: string;
+
+  @Column({ nullable: true })
+  state: string;
 }

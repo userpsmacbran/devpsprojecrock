@@ -14,6 +14,7 @@ import { AuthGuard } from "../auth/jwt.strategy";
 import { QueryUserDto } from "./dto/query-user.dto";
 import { parse } from "path";
 import { ChangeStateDto } from "./dto/change-state.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Controller("user")
 export class UserController {
@@ -58,12 +59,14 @@ export class UserController {
     return this.userService.changeState(id, body);
   }
 
-  @UseGuards(AuthGuard)
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: any) {
-    return this.userService.update(+id, updateUserDto);
+  async update(@Param("id") id: number, @Body() updateUserDto: UpdateUserDto) {
+    return {
+      message: "ok",
+      data: await this.userService.update(id, updateUserDto),
+    };
   }
-
+  @UseGuards(AuthGuard)
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.userService.remove(+id);

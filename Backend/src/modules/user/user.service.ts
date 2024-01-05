@@ -5,6 +5,7 @@ import { User } from "src/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ROLES } from "src/constants";
 import { ChangeStateDto } from "./dto/change-state.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UserService {
@@ -65,12 +66,16 @@ export class UserService {
     return { message: "Ok", data: user };
   }
 
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+
+    const updatedUser = this.userRepository.merge(user, updateUserDto);
+
+    return this.userRepository.save(updatedUser);
+  }
   findOne(id: number) {
     return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: any) {
-    return `This action updates a #${id} user`;
   }
 
   remove(id: number) {
