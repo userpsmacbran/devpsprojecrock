@@ -12,10 +12,14 @@ function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    adminCode: "", // Nuevo campo para el código
   });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const captcha = useRef(null);
+
+  const [codeSendend, setcodeSendend] = useState(false);
+  const [codeSendendText, setcodeSendendText] = useState("");
 
   const auth = useAuth();
   const goTo = useNavigate();
@@ -23,6 +27,7 @@ function Login() {
   if (auth.isAuthenticated) {
     return <Navigate to="/dashboard" />;
   }
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -47,13 +52,19 @@ function Login() {
     }
 
     if (formData.password.length < 8) {
-      setError("* - Please, enter a valid password(min 8 characters)");
+      setError("* - Please, enter a valid password (min 8 characters)");
       return;
+    }
+
+    // Agregar lógica para manejar el envío del código por correo electrónico
+    if (formData.code) {
+      // Aquí puedes implementar el envío del código por correo electrónico
+      console.log(`Código enviado a ${formData.email}: ${formData.code}`);
     }
 
     try {
       const response = await api.post("/auth/login/admins", formData);
-      console.log("Usuario logueado con exito", response.data);
+      console.log("Usuario logueado con éxito", response.data);
       if (response.data.token) {
         auth.saveUser(response.data);
         goTo("/dashboard");
@@ -75,8 +86,30 @@ function Login() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
   const onChange = () => {
     setError("");
+  };
+
+  const handleSendCode = async () => {
+    try {
+      // Puedes utilizar la misma lógica que usas para el envío del código en handleSubmit
+      if (!validateEmail(formData.email)) {
+        setError("* - Please, enter a valid email");
+        return;
+      }
+
+      const response = await api.post("/auth/send-code-admin", {
+        email: formData.email,
+      });
+      setcodeSendend(true);
+      setcodeSendendText(response.data.data);
+
+      console.log(`Código enviado a ${formData.email}`);
+    } catch (error) {
+      console.log(error);
+      setError("* - " + error.response.data.message);
+    }
   };
   return (
     <main className="flex h-screen">
@@ -172,6 +205,39 @@ function Login() {
                 }}
               />
             </div>
+            <div className="mb-6">
+              <TextField
+                id="adminCode"
+                name="adminCode"
+                label="Código del Administrador"
+                variant="outlined"
+                onChange={handleInputChange}
+                fullWidth
+                size="small"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#ffffff", // color del borde predeterminado
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#ffffff", // color del borde al pasar el mouse
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#ffffff", // color del borde cuando está enfocado
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "#ffffff", // color de la etiqueta predeterminado
+                    "&.Mui-focused": {
+                      color: "#ffffff", // color del label cuando está enfocado
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#ffffff", // color del texto
+                  },
+                }}
+              />
+            </div>
             <div className="flex justify-center my-6">
               <ReCaptcha
                 ref={captcha}
@@ -179,27 +245,48 @@ function Login() {
                 onChange={onChange}
               />
             </div>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{
-                bgcolor: "#F66E0C",
-                borderRadius: "20px",
-                height: "40px",
-                "&:hover": {
-                  bgcolor: "#FF6B00",
-                },
-              }}
-            >
-              INICIAR
-            </Button>
+            <div className="flex justify-between">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{
+                  bgcolor: "#F66E0C",
+                  borderRadius: "20px",
+                  height: "40px",
+                  "&:hover": {
+                    bgcolor: "#FF6B00",
+                  },
+                }}
+              >
+                INICIAR
+              </Button>
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={handleSendCode}
+                sx={{
+                  bgcolor: "#1E40AF",
+                  borderRadius: "20px",
+                  height: "40px",
+                  "&:hover": {
+                    bgcolor: "#1C3FAA",
+                  },
+                }}
+              >
+                Enviar Código
+              </Button>
+            </div>
           </form>
         </div>
         <div className="w-8/12 h-24 flex justify-center">
           <p className="text-red-400  font-bold relative text-2xl my-6">
             {error}
+          </p>
+          <p className="text-green-400  font-bold relative text-2xl my-6">
+            {codeSendendText}
           </p>
         </div>
       </div>
