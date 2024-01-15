@@ -20,7 +20,6 @@ export class UserService {
     const { skip, take } = paginationOptions;
 
     const queryBuilder = this.userRepository.createQueryBuilder("user");
-
     queryBuilder.where((qb: SelectQueryBuilder<User>) => {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined) {
@@ -28,6 +27,11 @@ export class UserService {
             qb.andWhere(`user.${key} ILIKE :${key}`, { [key]: `%${value}%` });
           } else if (key === "state_User") {
             qb.andWhere(`user.state_User = :state_User`, { state_User: value });
+          } else if (key === "searchTerm") {
+            qb.andWhere(`user.name ILIKE :name OR user.email ILIKE :email`, {
+              name: `%${value}%`,
+              email: `%${value}%`,
+            });
           } else {
             qb.andWhere(`user.${key} = :${key}`, { [key]: value });
           }
@@ -46,11 +50,9 @@ export class UserService {
     } else {
       queryBuilder.take(10);
     }
-    queryBuilder.orderBy("user.id", "ASC"); // Ordenar por nombre de forma predeterminada
-    // Contar el número total de usuarios sin paginación
-    const total = await queryBuilder.getCount();
 
-    // Obtener los usuarios paginados
+    queryBuilder.orderBy("user.id", "DESC");
+    const total = await queryBuilder.getCount();
     const users = await queryBuilder.getMany();
     return { total, users };
   }
@@ -74,11 +76,24 @@ export class UserService {
 
     return this.userRepository.save(updatedUser);
   }
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ["country", "state", "city"],
+    });
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+    return { message: "Ok", data: user };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = this.userRepository.findOne({ where: { id } });
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+
+    const idUser = (await user).id;
+    await this.userRepository.delete(id);
+    return {
+      message: "Ok",
+      data: `User delete successfully: ${idUser}`,
+    };
   }
 }

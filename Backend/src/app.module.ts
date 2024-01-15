@@ -17,6 +17,11 @@ import { CryptoModule } from "./modules/crypto/crypto.module";
 import { OwnerModule } from "./modules/owner/owner.module";
 import { WalletModule } from "./modules/wallet/wallet.module";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
+import { CountryModule } from "./modules/country/country.module";
+import { StateModule } from "./modules/state/state.module";
+import { CityModule } from "./modules/city/city.module";
+import { StripeModule } from "./modules/stripe/stripe.module";
+import { MembershipModule } from "./modules/membership/membership.module";
 
 @Module({
   imports: [
@@ -38,6 +43,11 @@ import { DashboardModule } from "./modules/dashboard/dashboard.module";
     OwnerModule,
     WalletModule,
     DashboardModule,
+    CountryModule,
+    StateModule,
+    CityModule,
+    StripeModule,
+    MembershipModule,
   ],
   providers: [
     {

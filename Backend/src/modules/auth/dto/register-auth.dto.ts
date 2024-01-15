@@ -21,14 +21,17 @@ export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
   @IsString()
   lastName: string;
 
-  @IsString()
-  country: string;
+  @IsNumber()
+  countryId: number;
+
+  @IsNumber()
+  stateId: number;
+
+  @IsNumber()
+  cityId: number;
 
   @IsString()
-  city: string;
-
-  @IsString()
-  adress: string;
+  address: string;
 
   @IsEnum(ROLES)
   type: ROLES;
@@ -64,7 +67,4 @@ export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
 
   @IsString()
   postalCode: string;
-
-  @IsString()
-  state: string;
 }

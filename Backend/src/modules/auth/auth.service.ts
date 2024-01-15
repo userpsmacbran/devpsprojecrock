@@ -13,29 +13,54 @@ import { isValidDateFormat } from "../../utils/isValidDateFormat";
 
 import { Logger } from "@nestjs/common";
 import { EmailService } from "../email/email.service";
+import { CountryService } from "../country/country.service";
+import { Country } from "src/entities/country.entity";
+import { State } from "src/entities/state.entity";
+import { City } from "src/entities/city.entity";
 const logger = new Logger("MyApp");
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private readonly modePlayService: ModeplayService,
     private readonly walletService: WalletService,
     private jwtAuthService: JwtService,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    @InjectRepository(Country)
+    private readonly countryRepository: Repository<Country>,
+    @InjectRepository(State)
+    private readonly stateRepository: Repository<State>,
+    @InjectRepository(City)
+    private readonly cityRepository: Repository<City>
   ) {}
 
   async register(userObjectRegister: RegisterAuthDtoBase) {
     try {
       const { password, email, type, ruc, birthDate } = userObjectRegister;
-
+      console.log(userObjectRegister);
       if (type !== ROLES.EMPRESA) {
         if (!isValidDateFormat(birthDate)) {
           return new HttpException("DATE_FORMAT_IS_INVALID", 400);
         }
       }
-      if (!email) return new HttpException("EMAIL_IS_REQUIRED", 400);
-      if (!password) return new HttpException("PASSWORD_IS_REQUIRED", 400);
+      if (!email) throw new HttpException("EMAIL_IS_REQUIRED", 400);
+      if (!password) throw new HttpException("PASSWORD_IS_REQUIRED", 400);
+
+      //Validate country,state and city.
+      const country = await this.countryRepository.findOne({
+        where: { id: userObjectRegister.countryId },
+      });
+      if (!country) throw new HttpException("COUNTRY_NOT_FOUND", 404);
+
+      const state = await this.stateRepository.findOne({
+        where: { id: userObjectRegister.stateId },
+      });
+      if (!state) throw new HttpException("STATE_NOT_FOUND", 404);
+
+      const city = await this.cityRepository.findOne({
+        where: { id: userObjectRegister.cityId },
+      });
+      if (!city) throw new HttpException("CITY_NOT_FOUND", 404);
 
       const plaintoHash = await hash(password, 10);
       userObjectRegister = { ...userObjectRegister, password: plaintoHash };
@@ -44,10 +69,8 @@ export class AuthService {
           email,
         },
       });
-
       if (userFound) throw new HttpException("USER_EXIST", 400);
       let user: User;
-
       if (type === ROLES.EMPRESA && !ruc) {
         throw new HttpException("RUC_REQUIRED_FOR_COMPANY", 400);
       }
@@ -57,10 +80,10 @@ export class AuthService {
           name: userObjectRegister.name,
           email: userObjectRegister.email,
           pass_word: plaintoHash,
-          country: userObjectRegister.country,
-          state: userObjectRegister.state,
-          city: userObjectRegister.city,
-          adress: userObjectRegister.adress,
+          country: userObjectRegister.countryId,
+          state: userObjectRegister.stateId,
+          city: userObjectRegister.cityId,
+          address: userObjectRegister.address,
           type: type,
           logo: userObjectRegister.logo,
           code_Phone: userObjectRegister.codePhone,
@@ -74,9 +97,7 @@ export class AuthService {
           userPayload.last_Name = userObjectRegister.lastName;
           userPayload.birth_Date = userObjectRegister.birthDate;
         }
-
         user = await this.userRepository.save(userPayload);
-
         const wallet = await this.walletService.createWalletForUser(user.id);
         user.wallet = wallet;
         await this.userRepository.save(user);
@@ -87,20 +108,21 @@ export class AuthService {
         type === ROLES.ADMIN ||
         type === ROLES.EMPLEADOS
       ) {
-        user = await this.userRepository.save({
+        let userPayload: any = {
           name: userObjectRegister.name,
-          last_Name: userObjectRegister.lastName,
           email: userObjectRegister.email,
           pass_word: plaintoHash,
-          country: userObjectRegister.country,
-          city: userObjectRegister.city,
-          adress: userObjectRegister.adress,
+          country: userObjectRegister.countryId,
+          state: userObjectRegister.stateId,
+          city: userObjectRegister.cityId,
+          address: userObjectRegister.address,
           type: type,
           logo: userObjectRegister.logo,
           code_Phone: userObjectRegister.codePhone,
           phone: userObjectRegister.phone,
-          birth_Date: userObjectRegister.birthDate,
-        });
+          postalCode: userObjectRegister.postalCode,
+        };
+        user = await this.userRepository.save(userPayload);
       }
 
       if (type === ROLES.CLIENTE) {
@@ -115,6 +137,9 @@ export class AuthService {
         await this.userRepository.save(user);
       }
 
+      // Delete password and wallet from response for security
+      delete user.pass_word;
+      delete user.wallet;
       return {
         message: "ok",
         data: {
@@ -130,36 +155,77 @@ export class AuthService {
     return Math.floor(1000 + Math.random() * 9000).toString();
   }
 
-  async login(userObjetLogin: LoginAuthDto) {
+  async login(userObjectLogin: LoginAuthDto, type: string) {
     try {
-      const { email, password } = userObjetLogin;
-
+      const { email, password } = userObjectLogin;
       const findUser = await this.userRepository.findOne({
         where: { email },
+        relations: ["country"],
       });
-      if (!findUser) throw new HttpException("USER_NOT_FOUND", 404);
+      if (!findUser) {
+        throw new HttpException("USER_NOT_FOUND", 404);
+      }
 
-      //Validacion para que no deje loguear si el estado de cuenta no es activo = 1.
+      // Validar el tipo de usuario en el login
+      const validRoles: Record<string, number[]> = {
+        companies: [ROLES.EMPRESA, ROLES.EMPLEADOS],
+        clients: [ROLES.CLIENTE],
+        admins: [ROLES.SUPERADMIN, ROLES.ADMIN],
+      };
+
+      const allowedRoles = validRoles[type];
+      if (!allowedRoles) {
+        throw new HttpException("INVALID_LOGIN_TYPE", 400);
+      }
+      if (!this.isLoginForType(findUser, allowedRoles)) {
+        throw new HttpException("ACCESS_DENIED", 403);
+      }
+
+      // Si el usuario es un administrador, validar el adminCode
       if (
-        findUser.type === ROLES.EMPRESA ||
-        findUser.type === ROLES.CLIENTE ||
-        findUser.type === ROLES.EMPLEADOS
+        allowedRoles.includes(ROLES.ADMIN) ||
+        allowedRoles.includes(ROLES.SUPERADMIN)
       ) {
-        if (findUser.state_User !== STATES.ACTIVO) {
-          throw new HttpException("USER_IS_NOT_ACTIVE", 400);
+        if (
+          !userObjectLogin.adminCode ||
+          userObjectLogin.adminCode !== findUser.adminCode
+        ) {
+          throw new HttpException("INVALID_ADMIN_CODE", 403);
         }
       }
 
-      const checkPassword = await compare(password, findUser.pass_word);
-      if (!checkPassword) throw new HttpException("PASSWORD_INCORRECT", 403);
+      // Validate user state only for clients, companies and employees
+      if (
+        [ROLES.EMPRESA, ROLES.CLIENTE, ROLES.EMPLEADOS].includes(
+          findUser.type
+        ) &&
+        findUser.state_User !== STATES.ACTIVO
+      ) {
+        throw new HttpException("USER_IS_NOT_ACTIVE", 400);
+      }
 
-      const payload = { id: findUser.id, name: findUser.name };
-      //@author: alejandor morales (Cambie la expiracion del token)
-      const token = this.jwtAuthService.sign(payload, { expiresIn: "1h" }); // Cambiado a 1 hora
+      // Check password
+      const checkPassword = await compare(password, findUser.pass_word);
+      if (!checkPassword) {
+        throw new HttpException("PASSWORD_INCORRECT", 403);
+      }
+
+      // Generate token
+      const payload = {
+        id: findUser.id,
+        name: findUser.name,
+        countryId: findUser.country.id,
+      };
+
+      const token = this.jwtAuthService.sign(payload, { expiresIn: "1h" });
       const tokenExpiration = new Date(
         new Date().getTime() + 1 * 60 * 60 * 1000
-      ); // Cambiado a 1 hora
+      );
+      //
+      findUser.adminCode = null;
+      await this.userRepository.save(findUser);
 
+      // Response login data
       const data = {
         user: {
           id: findUser.id,
@@ -167,7 +233,7 @@ export class AuthService {
           lastName: findUser.last_Name,
           email: findUser.email,
           country: findUser.city,
-          adress: findUser.adress,
+          address: findUser.address,
           type: findUser.type,
           logo: findUser.logo,
           codePhone: findUser.code_Phone,
@@ -184,6 +250,10 @@ export class AuthService {
     } catch (error) {
       throw new HttpException(error, 400);
     }
+  }
+
+  private isLoginForType(user: User, validRoles: number[]): boolean {
+    return validRoles.includes(user.type);
   }
 
   async verifyAccountUser(id: number, code: string) {
@@ -230,20 +300,27 @@ export class AuthService {
       data: "Code resend successfully",
     };
   }
-  async activeAccountCompany(id: number) {
-    const company = await this.userRepository.findOne({ where: { id } });
-    if (!company) return new HttpException("COMPANY_NOT_FOUND", 404);
-    if (company.type !== ROLES.EMPRESA)
-      return new HttpException("USER_IS_NOT_A_COMPANY_TYPE", 400);
-    if (company.state_User === STATES.ACTIVO)
-      return new HttpException("COMPANY_ALREADY_VERIFIED", 400);
 
-    company.state_User = STATES.ACTIVO;
-    await this.userRepository.save(company);
+  async sendCodeAdmin(body: any) {
+    const { email } = body;
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) return new HttpException("USER_NOT_FOUND", 404);
+    if (user.type !== ROLES.ADMIN && user.type !== ROLES.SUPERADMIN)
+      return new HttpException("USER_IS_NOT_A_ADMIN_TYPE", 400);
+
+    const code = this.generateVerificationCode();
+    await this.emailService.sendEmail(
+      email,
+      "Verificacion de Cuenta - Administrador ",
+      `<div><h1>Tu codigo de verificacion para tu cuenta es: ${code} </h1></div>`
+    );
+
+    user.adminCode = code;
+    await this.userRepository.save(user);
 
     return {
       message: "ok",
-      data: "Company account successfully activated",
+      data: "Code admin send successfully",
     };
   }
 }

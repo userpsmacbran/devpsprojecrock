@@ -29,17 +29,17 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  city?: string;
+  cityId?: string;
 
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  state?: string;
+  stateId?: string;
 
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  country?: string;
+  countryId?: string;
 
   @IsOptional()
   @IsString()

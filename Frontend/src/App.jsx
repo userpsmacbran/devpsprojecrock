@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./views/Login/Login";
 import { AuthProvider } from "./auth/AuthProvider";
 import Graphics from "./views/Graphics/Graphics";
@@ -10,6 +10,8 @@ import Moderators from "./views/Users/Moderators/Moderators";
 import Companies from "./views/Users/Companies/Companies";
 import PublicRoute from "./components/Routes/PublicRoute";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
+import CreateUser from "./views/Users/Create/CreateUser";
+import Memberships from "./views/Memberships/Memberships";
 
 function App() {
   return (
@@ -17,18 +19,22 @@ function App() {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<PublicRoute />}>
+          <Route index element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/testing" element={<ResponsiveDrawer />} />
         </Route>
+
         {/* Rutas protegidas */}
         <Route path="/" element={<ProtectedRoute />}>
           {/* Layout para rutas protegidas */}
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/graphics" element={<Graphics />} />
+            <Route path="/memberships" element={<Memberships />} />
             <Route path="/users/clients" element={<Clients />} />
             <Route path="/users/companies" element={<Companies />} />
             <Route path="/users/moderators" element={<Moderators />} />
+            <Route path="/users/create" element={<CreateUser />} />
             <Route
               path="/users/*"
               element={<div>Page in users not found</div>}

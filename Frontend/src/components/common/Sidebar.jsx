@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import { useTranslation } from "react-i18next";
@@ -12,6 +13,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SidebarItemLogout from "./SidebarItemLogout";
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+
 import { useAuth } from "../../auth/AuthProvider";
 import { useState } from "react";
 
@@ -20,7 +23,7 @@ function Sidebar({ handleDrawerToggle }) {
 
   const auth = useAuth();
 
-  const [activeItem, setActiveItem] = useState("dashboard"); // Nuevo estado para el elemento activo
+  const [activeItem, setActiveItem] = useState("dashboard");
   const handleItemClick = (itemId) => {
     console.log(itemId);
     setActiveItem(itemId);
@@ -57,6 +60,11 @@ function Sidebar({ handleDrawerToggle }) {
           translationKey: "menu_moderators",
           icon: <SupervisorAccountIcon />,
         },
+        {
+          id: "create",
+          translationKey: "Crear",
+          icon: <DashboardIcon />,
+        },
       ],
     },
     {
@@ -70,6 +78,12 @@ function Sidebar({ handleDrawerToggle }) {
       icon: <HelpOutlineIcon />,
       subItems: null,
     },
+    {
+      id: "memberships",
+      translationKey: "menu_memberships",
+      icon: <AccountBalanceIcon />,
+      subItems: null,
+    }
   ];
 
   return (
