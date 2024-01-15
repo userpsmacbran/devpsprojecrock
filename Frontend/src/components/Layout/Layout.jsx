@@ -35,6 +35,7 @@ function Layout(props) {
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
+          disableScrollLock={true}
           container={container}
           variant="temporary"
           open={mobileOpen}
@@ -53,6 +54,7 @@ function Layout(props) {
           {<Sidebar handleDrawerToggle={handleDrawerToggle} />}
         </Drawer>
         <Drawer
+          disableScrollLock={true}
           variant="permanent"
           sx={{
             display: { xs: "none", sm: "block" },

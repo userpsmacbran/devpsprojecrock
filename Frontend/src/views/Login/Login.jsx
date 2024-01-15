@@ -52,7 +52,7 @@ function Login() {
     }
 
     try {
-      const response = await api.post("/auth/login", formData);
+      const response = await api.post("/auth/login/admins", formData);
       console.log("Usuario logueado con exito", response.data);
       if (response.data.token) {
         auth.saveUser(response.data);
