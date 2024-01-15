@@ -2,6 +2,10 @@ import { IsEnum, IsOptional, IsString, IsIn } from "class-validator";
 
 export class QueryUserDto {
   @IsOptional()
+  @IsString({ message: "Invalid user searchTerm." })
+  searchTerm?: string;
+
+  @IsOptional()
   @IsString({ message: "Invalid user role." })
   @IsIn(["18", "19", "23", "99"], { message: "Invalid user role." })
   type?: string;

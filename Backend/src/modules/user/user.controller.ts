@@ -12,7 +12,6 @@ import {
 import { UserService } from "./user.service";
 import { AuthGuard } from "../auth/jwt.strategy";
 import { QueryUserDto } from "./dto/query-user.dto";
-import { parse } from "path";
 import { ChangeStateDto } from "./dto/change-state.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
@@ -22,7 +21,7 @@ export class UserController {
 
   @Get()
   async findAll(@Query() query: QueryUserDto) {
-    const { type, country, city, state_User, skip, take } = query;
+    const { type, country, city, state_User, skip, take, searchTerm } = query;
 
     const parsedType = type
       ? typeof type === "string"
@@ -36,6 +35,7 @@ export class UserController {
       : undefined;
 
     const options = {
+      searchTerm,
       type: parsedType,
       country,
       city,
@@ -50,8 +50,8 @@ export class UserController {
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.userService.findOne(+id);
+  findOne(@Param("id") id: number) {
+    return this.userService.findOne(id);
   }
 
   @Patch("change-state/:id")
@@ -66,9 +66,13 @@ export class UserController {
       data: await this.userService.update(id, updateUserDto),
     };
   }
-  @UseGuards(AuthGuard)
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  remove(@Param("id") id: number) {
+    return this.userService.remove(id);
+  }
+  @UseGuards(AuthGuard)
+  @Delete("/test/auth/:id")
+  removed(@Param("id") id: string) {
     return this.userService.remove(+id);
   }
 }

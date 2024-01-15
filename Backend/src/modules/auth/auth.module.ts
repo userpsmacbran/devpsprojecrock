@@ -9,11 +9,17 @@ import { ModePlay } from "src/entities/modePlay.entity";
 import { ModeplayModule } from "../modeplay/modeplay.module";
 import { WalletModule } from "../wallet/wallet.module";
 import { EmailModule } from "../email/email.module";
+import { CountryModule } from "../country/country.module";
+import { StateModule } from "../state/state.module";
+import { CityModule } from "../city/city.module";
 
 const configService = new ConfigService();
 
 @Module({
   imports: [
+    CountryModule,
+    StateModule,
+    CityModule,
     EmailModule,
     WalletModule,
     ModeplayModule,

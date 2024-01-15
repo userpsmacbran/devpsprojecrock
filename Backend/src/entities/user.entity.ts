@@ -6,6 +6,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -13,6 +14,11 @@ import { ModePlay } from "./modePlay.entity";
 import { Exclude } from "class-transformer";
 import { Wallet } from "./wallet.entity";
 import { Owner } from "./owner.entity";
+import { Country } from "./country.entity";
+import { State } from "./state.entity";
+import { City } from "./city.entity";
+import { Membership } from "./membership.entity";
+import { MembershipTypes } from "src/constants/membership.enum";
 @Entity("user")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -31,14 +37,20 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", nullable: false })
   pass_word: string;
 
-  @Column({ type: "varchar", nullable: false })
-  country: string;
+  @ManyToOne(() => Country)
+  @JoinColumn({ name: "countryId" })
+  country: Country;
+
+  @ManyToOne(() => State)
+  @JoinColumn({ name: "stateId" })
+  state: State;
+
+  @ManyToOne(() => City)
+  @JoinColumn({ name: "cityId" })
+  city: City;
 
   @Column({ type: "varchar", nullable: false })
-  city: string;
-
-  @Column({ type: "varchar", nullable: false })
-  adress: string;
+  address: string;
 
   @Column({ type: "enum", enum: ROLES })
   type: ROLES;
@@ -92,6 +104,10 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   postalCode: string;
 
-  @Column({ nullable: true })
-  state: string;
+  @Column({ nullable: true, default: null })
+  adminCode: string;
+
+  @ManyToOne(() => Membership, { nullable: true })
+  @JoinColumn({ name: "activeMembershipId" })
+  activeMembership: Membership | null;
 }

@@ -8,12 +8,12 @@ export class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: "mail.psrockola.com", // Reemplaza con la información de tu servidor de correo
+      host: "mail.psrockola.com", 
       port: 465,
       secure: true,
       auth: {
-        user: "equiporockola@psrockola.com", // Reemplaza con tu dirección de correo
-        pass: "2j+o9vC3k7}r", // Reemplaza con tu contraseña
+        user: "equiporockola@psrockola.com", 
+        pass: "2j+o9vC3k7}r", 
       },
     });
   }

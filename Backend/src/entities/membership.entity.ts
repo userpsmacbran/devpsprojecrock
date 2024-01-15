@@ -1,19 +1,33 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Country } from "./country.entity";
+import { MembershipTypes } from "src/constants/membership.enum";
 
-@Entity('r_member_ships')
+@Entity("memberships")
 export class Membership extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  r_id: number;
+  @PrimaryGeneratedColumn("increment")
+  id: number;
 
-  @Column({ type: 'int' })
-  r_type: number;
+  @Column({ type: "varchar", length: 100, nullable: false })
+  name: string;
 
-  @Column({ type: 'date' })
-  r_init_Date: Date;
+  @Column({ type: "varchar", length: 50, nullable: false })
+  price: string;
 
-  @Column({ type: 'date' })
-  r_exp_Date: Date;
+  @Column({ type: "varchar", length: 3, nullable: false })
+  currency: string;
 
-  @Column({ type: 'int' })
-  r_state: number;
+  @ManyToOne(() => Country, { eager: true })
+  country: Country;
+
+  @Column({
+    type: "enum",
+    enum: MembershipTypes,
+  })
+  type: MembershipTypes;
 }
