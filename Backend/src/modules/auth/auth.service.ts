@@ -304,9 +304,9 @@ export class AuthService {
   async sendCodeAdmin(body: any) {
     const { email } = body;
     const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) return new HttpException("USER_NOT_FOUND", 404);
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
     if (user.type !== ROLES.ADMIN && user.type !== ROLES.SUPERADMIN)
-      return new HttpException("USER_IS_NOT_A_ADMIN_TYPE", 400);
+      throw new HttpException("USER_IS_NOT_A_ADMIN_TYPE", 400);
 
     const code = this.generateVerificationCode();
     await this.emailService.sendEmail(
