@@ -4,7 +4,6 @@ import { useAuth } from "../../auth/AuthProvider";
 export default function ProtectedRoute() {
   const { isAuthenticated } = useAuth();
 
-  console.log(isAuthenticated);
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }

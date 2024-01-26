@@ -20,6 +20,7 @@ const Companies = () => {
   // Filter states
   const [searchTerm, setSearchTerm] = useState(undefined);
   const [stateCompany, setStateCompany] = useState(undefined);
+  const [country, setCountry] = useState(undefined);
 
   // Modal states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -44,6 +45,7 @@ const Companies = () => {
             skip: page * rowsPerPage,
             searchTerm: searchTerm?.trim() ? searchTerm : undefined,
             state_User: stateCompany ? stateCompany : undefined,
+            country: country ? country : undefined,
           },
         });
         setCompanies(response.data.data.users);
@@ -59,7 +61,7 @@ const Companies = () => {
     };
 
     fetchData();
-  }, [page, rowsPerPage, deletedUserId, searchTerm, stateCompany]);
+  }, [page, rowsPerPage, deletedUserId, searchTerm, stateCompany, country]);
 
   // Change user state (active/inactive/banned)
   const handleToggleChange = async (id, currentState) => {
@@ -131,6 +133,7 @@ const Companies = () => {
         setCompanies={setCompanies}
         setSearchTerm={setSearchTerm}
         setStateCompany={setStateCompany}
+        setCountry={setCountry}
       />
       <TableComponent
         loading={loading}

@@ -5,13 +5,14 @@ import Graphics from "./views/Graphics/Graphics";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Layout from "./components/Layout/Layout";
 import ResponsiveDrawer from "./views/Testing/Testing";
-import Clients from "./views/Users/clients/Clients";
+import Clients from "./views/Users/Clients/Clients";
 import Moderators from "./views/Users/Moderators/Moderators";
 import Companies from "./views/Users/Companies/Companies";
 import PublicRoute from "./components/Routes/PublicRoute";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import CreateUser from "./views/Users/Create/CreateUser";
 import Memberships from "./views/Memberships/Memberships";
+import EditMemberships from "./views/Memberships/Edit/EditMemberships";
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/graphics" element={<Graphics />} />
-            <Route path="/memberships" element={<Memberships />} />
+            <Route path="/memberships/create" element={<Memberships />} />
+            <Route path="/memberships/edit" element={<EditMemberships />} />
             <Route path="/users/clients" element={<Clients />} />
             <Route path="/users/companies" element={<Companies />} />
             <Route path="/users/moderators" element={<Moderators />} />

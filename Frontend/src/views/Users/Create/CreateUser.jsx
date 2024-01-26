@@ -6,6 +6,8 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CreateCompanyForm from "../../../components/Users/Create/CreateCompanyForm";
+import { useEffect } from "react";
+import api from "../../../api/api";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -37,6 +39,7 @@ function a11yProps(index) {
 export default function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [countries, setCountries] = React.useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -45,6 +48,19 @@ export default function FullWidthTabs() {
   const handleChangeIndex = (index) => {
     setValue(index);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("/country");
+        setCountries(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
@@ -59,7 +75,7 @@ export default function FullWidthTabs() {
         >
           <Tab label="Company" {...a11yProps(0)} />
           <Tab label="Client" {...a11yProps(1)} />
-          <Tab label="OPTION #3" {...a11yProps(2)} />
+          <Tab label="Moderador" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
 

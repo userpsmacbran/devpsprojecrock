@@ -13,7 +13,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SidebarItemLogout from "./SidebarItemLogout";
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 
 import { useAuth } from "../../auth/AuthProvider";
 import { useState } from "react";
@@ -82,8 +82,24 @@ function Sidebar({ handleDrawerToggle }) {
       id: "memberships",
       translationKey: "menu_memberships",
       icon: <AccountBalanceIcon />,
-      subItems: null,
-    }
+      subItems: [
+        {
+          id: "create",
+          translationKey: "menu_membership_create",
+          icon: <BusinessIcon />,
+        },
+        {
+          id: "edit",
+          translationKey: "menu_membership_edit",
+          icon: <PersonIcon />,
+        },
+        {
+          id: "delete",
+          translationKey: "menu_membership_delete",
+          icon: <PersonIcon />,
+        },
+      ],
+    },
   ];
 
   return (
