@@ -160,7 +160,7 @@ export class AuthService {
       const { email, password } = userObjectLogin;
       const findUser = await this.userRepository.findOne({
         where: { email },
-        relations: ["country"],
+        relations: ["country", "activeMembership"],
       });
       if (!findUser) {
         throw new HttpException("USER_NOT_FOUND", 404);
@@ -193,6 +193,15 @@ export class AuthService {
           throw new HttpException("INVALID_ADMIN_CODE", 403);
         }
       }
+
+      /* if (allowedRoles.includes(ROLES.EMPRESA)) {
+        if (
+          !userObjectLogin.adminCode ||
+          userObjectLogin.adminCode !== findUser.adminCode
+        ) {
+          throw new HttpException("INVALID_COMPANY_CODE", 403);
+        }
+      }*/
 
       // Validate user state only for clients, companies and employees
       if (
@@ -232,15 +241,12 @@ export class AuthService {
           name: findUser.name,
           lastName: findUser.last_Name,
           email: findUser.email,
-          country: findUser.city,
-          address: findUser.address,
           type: findUser.type,
-          logo: findUser.logo,
-          codePhone: findUser.code_Phone,
-          phone: findUser.phone,
-          birthDate: findUser.birth_Date,
-          stateWallet: findUser.state_Wallet,
-          stateUser: findUser.state_User,
+          membership: {
+            name: findUser.activeMembership?.name,
+            type: findUser.activeMembership?.type,
+            expiration: findUser.membershipExpirationDate,
+          },
         },
         token,
         tokenExpiration,
@@ -321,6 +327,29 @@ export class AuthService {
     return {
       message: "ok",
       data: "Code admin send successfully",
+    };
+  }
+
+  async sendCodeCompany(body: any) {
+    const { email } = body;
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+    if (user.type !== ROLES.EMPRESA)
+      throw new HttpException("USER_IS_NOT_COMPANY", 400);
+
+    const code = this.generateVerificationCode();
+    await this.emailService.sendEmail(
+      email,
+      "Verificacion de Cuenta - Empresas ",
+      `<div><h1>Tu codigo de verificacion para tu cuenta es: ${code} </h1></div>`
+    );
+
+    user.adminCode = code;
+    await this.userRepository.save(user);
+
+    return {
+      message: "ok",
+      data: "Code company send successfully",
     };
   }
 }

@@ -19,8 +19,14 @@ export class Membership extends BaseEntity {
   @Column({ type: "varchar", length: 50, nullable: false })
   price: string;
 
+  @Column({ type: "int", nullable: false })
+  amount: number;
+
   @Column({ type: "varchar", length: 3, nullable: false })
   currency: string;
+
+  @Column({ default: true, nullable: false })
+  active: boolean;
 
   @ManyToOne(() => Country, { eager: true })
   country: Country;

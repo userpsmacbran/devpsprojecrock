@@ -70,6 +70,7 @@ export class UserController {
   remove(@Param("id") id: number) {
     return this.userService.remove(id);
   }
+
   @UseGuards(AuthGuard)
   @Delete("/test/auth/:id")
   removed(@Param("id") id: string) {

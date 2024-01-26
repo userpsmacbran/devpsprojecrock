@@ -35,9 +35,6 @@ export class Owner extends BaseEntity {
   identification: string;
 
   @Column()
-  codePhone: string;
-
-  @Column()
   phone: string;
 
   @Column()

@@ -16,7 +16,6 @@ const configService = new ConfigService();
 //username: "postgres",
 //password: "Ale31110364",
 //database: "rockola",
-
 //entities: [__dirname + "/../**/*.entity{.ts,.js}"],
 //synchronize: true,
 //};
