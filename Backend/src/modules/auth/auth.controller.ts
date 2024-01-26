@@ -47,4 +47,8 @@ export class AuthController {
   async sendCodeAdmin(@Body() body: any) {
     return this.authService.sendCodeAdmin(body);
   }
+  @Post("send-code-company")
+  async sendCodeCompany(@Body() body: any) {
+    return this.authService.sendCodeCompany(body);
+  }
 }

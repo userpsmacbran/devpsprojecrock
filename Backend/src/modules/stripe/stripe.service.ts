@@ -1,9 +1,10 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import Stripe from "stripe";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Membership } from "src/entities/membership.entity";
 import { Repository } from "typeorm";
+import { UserService } from "../user/user.service";
 const configService = new ConfigService();
 
 @Injectable()
@@ -14,47 +15,57 @@ export class StripeService {
 
   constructor(
     @InjectRepository(Membership)
-    private readonly membershipRepository: Repository<Membership>
+    private readonly membershipRepository: Repository<Membership>,
+    private readonly userService: UserService
   ) {}
 
   async createCheckoutSessionSubscription(
     membershipId: number,
     userId: number
-  ) {
-    try {
-      console.log(membershipId);
-      const membership = await this.membershipRepository.findOne({
-        where: { id: membershipId },
-      });
+  ): Promise<Stripe.Checkout.Session | { error: string }> {
+    const membership = await this.membershipRepository.findOne({
+      where: { id: membershipId },
+    });
+    if (!membership)
+      throw new HttpException("MEMBERSHIP_NOT_FOUND", HttpStatus.NOT_FOUND);
 
-      if (!membership) throw new HttpException("MEMBERSHIP_NOT_FOUND", 404);
+    const user = await this.userService.findOne(userId);
+    if (!user) throw new HttpException("USER_NOT_FOUND", HttpStatus.NOT_FOUND);
 
-      const session = await this.stripe.checkout.sessions.create({
-        mode: "subscription",
-        line_items: [
-          {
-            price: `${membership.price}`,
-            quantity: 1,
-          },
-        ],
-        success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://localhost:5173/subscriptions`,
-        metadata: {
-          userId: userId,
-          membershipId: membership.id,
-        },
-      });
-
-      return session;
-    } catch (e) {
-      throw new HttpException(e.message, e.statusCode);
+    if (user.data.activeMembership) {
+      throw new HttpException(
+        "USER_HAS_ACTIVE_MEMBERSHIP",
+        HttpStatus.BAD_REQUEST
+      );
     }
+
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    const session = await this.stripe.checkout.sessions.create({
+      mode: "subscription",
+      line_items: [
+        {
+          price: `${membership.price}`,
+          quantity: 1,
+        },
+      ],
+      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:5173/subscriptions`,
+      metadata: {
+        userId: userId,
+        membershipId: membership.id,
+        membership_name: membership.name,
+        membership_type: membership.type,
+        membership_expiration: nextMonth.toISOString(),
+      },
+    });
+    return session;
   }
 
   async getCheckoutSession(sessionId: string) {
     try {
       const session = await this.stripe.checkout.sessions.retrieve(sessionId);
-
       return session;
     } catch (error) {
       throw new HttpException(error.message, error.statusCode);
@@ -79,19 +90,54 @@ export class StripeService {
     }
   }
 
+  async updateStripePrice(
+    priceId: string,
+    newAmount: number,
+    newName: string,
+    newCurrency: string
+  ): Promise<Stripe.Price> {
+    try {
+      const price = await this.stripe.prices.retrieve(priceId);
+
+      // Crea un nuevo precio con las actualizaciones
+      const updatedPrice = await this.stripe.prices.create({
+        recurring: {
+          interval: "month",
+        },
+        unit_amount: newAmount,
+        currency: newCurrency,
+        product_data: {
+          name: newName,
+        },
+      });
+
+      // Desactiva el precio existente
+      await this.stripe.prices.update(priceId, {
+        active: false,
+      });
+
+      return updatedPrice;
+    } catch (error) {
+      console.error("Error al actualizar el precio en Stripe:", error);
+      throw new HttpException(error.message, error.statusCode);
+    }
+  }
   constructEventFromPayload(signature: string, payload: Buffer) {
     const secret = configService.get("STRIPE_WEBHOOK_SECRET");
-
     return this.stripe.webhooks.constructEvent(payload, signature, secret);
   }
 
   async processWebhookEvent(event: any): Promise<any> {
-    console.log("Evento recibido: ", event.type);
-    // Aqui evaluo el tipo de evento que recibo. Si es completed significa que el usuario
-    // pago la membresia y debo actualizar el usuario con la membresia..
+    if (event.type === "checkout.session.completed") {
+      const idUser = event.data.object.metadata.userId;
+      const idMembership = event.data.object.metadata.membershipId;
 
-    console.log(event.data.object.metadata);
-    // Aqui llega el usuario y la membresia.
-    // Se debe consumir servicio de membresia para actualizar el usuario.
+      const response = await this.userService.activateMembership(
+        idUser,
+        idMembership
+      );
+
+      console.log("response: ", response);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { ILike } from "typeorm";
 import { User } from "src/entities/user.entity";
@@ -6,11 +6,17 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ROLES } from "src/constants";
 import { ChangeStateDto } from "./dto/change-state.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { Membership } from "src/entities/membership.entity";
+import { EmailService } from "../email/email.service";
+import getBenefits from "src/utils/getBenefits";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Membership)
+    private readonly membershipRepository: Repository<Membership>,
+    private readonly emailService: EmailService
   ) {}
 
   async findAll(
@@ -20,10 +26,14 @@ export class UserService {
     const { skip, take } = paginationOptions;
 
     const queryBuilder = this.userRepository.createQueryBuilder("user");
+    queryBuilder.leftJoinAndSelect("user.country", "country"); // Incluye la relación con Country
+
     queryBuilder.where((qb: SelectQueryBuilder<User>) => {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined) {
-          if (key === "country" || key === "city") {
+          if (key === "country") {
+            qb.andWhere("user.countryId = :countryId", { countryId: value }); // Cambia a filtrar por ID de country
+          } else if (key === "city") {
             qb.andWhere(`user.${key} ILIKE :${key}`, { [key]: `%${value}%` });
           } else if (key === "state_User") {
             qb.andWhere(`user.state_User = :state_User`, { state_User: value });
@@ -79,7 +89,7 @@ export class UserService {
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ["country", "state", "city"],
+      relations: ["country", "state", "city", "activeMembership"],
     });
     if (!user) throw new HttpException("USER_NOT_FOUND", 404);
     return { message: "Ok", data: user };
@@ -95,5 +105,151 @@ export class UserService {
       message: "Ok",
       data: `User delete successfully: ${idUser}`,
     };
+  }
+
+  async activateMembership(id: number, membershipId: number) {
+    try {
+      const membership = await this.membershipRepository.findOne({
+        where: { id: membershipId },
+      });
+      if (!membership) throw new HttpException("MEMBERSHIP_NOT_FOUND", 404);
+
+      const user = await this.userRepository.findOne({
+        where: { id: id },
+        relations: ["activeMembership"],
+      });
+      if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+
+      console.log(`membership: ${user.activeMembership}`);
+      if (user.activeMembership) {
+        throw new HttpException(
+          "USER_HAS_ACTIVE_MEMBERSHIP",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const expirationDate = new Date();
+      expirationDate.setMonth(expirationDate.getMonth() + 1);
+
+      user.activeMembership = membership;
+      user.membershipExpirationDate = expirationDate;
+
+      const emailContent = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              background-color: #f4f4f4;
+            }
+            p {
+              color: #333;
+              font-size: 16px;
+              margin-bottom: 10px;
+            }
+            strong {
+              color: #007bff;
+            }
+            ul {
+              list-style-type: none;
+              padding: 0;
+            }
+            li {
+              margin-bottom: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <p>Has adquirido la membresía: <strong>${membership.name}</strong></p>
+          <p>Fecha de vencimiento: ${expirationDate.toDateString()}</p>
+          <p>Tipo de membresía: <b>${getBenefits(membership).type}</b></p>
+          <p>¡Gracias por ser parte de nuestro servicio!</p>
+          <p> Beneficios: </p>
+          <ul>
+            <li>Dispositivos de venta: ${getBenefits(membership).sales} </li>
+            <li>Skins: ${getBenefits(membership).sales} </li>
+            <li>Modos de reproducción personalizados: ${
+              getBenefits(membership).customModePlay ? "Si" : "No"
+            }</li>
+          </ul>
+        </body>
+      </html>
+    `;
+
+      this.emailService.sendEmail(
+        user.email,
+        "Membership Activated",
+        emailContent
+      );
+
+      await this.userRepository.save(user);
+      return {
+        message: "Ok",
+        data: user,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, error.statusCode);
+    }
+  }
+
+  async desactivateMembership(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+      relations: ["activeMembership"],
+    });
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+
+    if (!user.activeMembership)
+      throw new HttpException("USER_HAS_NOT_ACTIVE_MEMBERSHIP", 400);
+
+    const emailContent = `
+        <html>
+          <head>
+            <style>
+              body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4;
+              }
+              p {
+                color: #333;
+                font-size: 16px;
+                margin-bottom: 10px;
+              }
+              strong {
+                color: #007bff;
+              }
+              ul {
+                list-style-type: none;
+                padding: 0;
+              }
+              li {
+                margin-bottom: 5px;
+              }
+            </style>
+          </head>
+          <body>
+            <p>Has cancelado tu membresia: <strong>${
+              user.activeMembership.name
+            }</strong></p>
+            <p>Tipo de membresía: <b>${
+              getBenefits(user.activeMembership).type
+            }</b></p>
+            <p>¡Gracias por hacer uso de nuestros servicios, te invitamos a adquirir una nueva membresia!</p>
+          </body>
+        </html>
+      `;
+
+    user.activeMembership = null;
+    user.membershipExpirationDate = null;
+
+    await this.userRepository.save(user);
+
+    this.emailService.sendEmail(
+      user.email,
+      "Membership Canceled",
+      emailContent
+    );
+
+    return user;
   }
 }

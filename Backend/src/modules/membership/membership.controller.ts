@@ -1,27 +1,34 @@
-import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from "@nestjs/common";
 import { create } from "domain";
 import { MembershipService } from "./membership.service";
+import { CreateMembershipDto } from "./dto/create-membership.dto";
+import { UserService } from "../user/user.service";
 
 @Controller("membership")
 export class MembershipController {
-  constructor(private readonly membershipService: MembershipService) {}
+  constructor(
+    private readonly membershipService: MembershipService,
+    private readonly userService: UserService
+  ) {}
 
   @Post("create")
-  async createMembership(@Body() body) {
-    try {
-      const { name, amount, currency, countryId, type } = body;
+  async createMembership(@Body() body: CreateMembershipDto) {
+    const membership = await this.membershipService.createMembership(body);
+    return { message: "ok", data: membership };
+  }
 
-      const membership = await this.membershipService.createMembership({
-        name,
-        amount,
-        currency,
-        countryId,
-        type,
-      });
-      return membership;
-    } catch (error) {
-      return { error: error.message };
-    }
+  @Patch("update")
+  async updateMembership(@Body() body: any) {
+    const membership = await this.membershipService.updateMembership(body);
+    return { message: "ok", data: membership };
   }
 
   @Get("/:idCountry")
@@ -33,5 +40,22 @@ export class MembershipController {
     } catch (error) {
       return { error: error.message };
     }
+  }
+
+  @Get("get-membership/:idMembership")
+  async getMembershipById(@Param("idMembership") idMembership: number) {
+    try {
+      const membership =
+        await this.membershipService.getMembershipById(idMembership);
+      return membership;
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
+  @Post("cancel-subscription/:idUser")
+  async cancelSubscription(@Param("idUser") idUser: number) {
+    const canceled = await this.userService.desactivateMembership(idUser);
+    return { message: "ok", data: canceled };
   }
 }

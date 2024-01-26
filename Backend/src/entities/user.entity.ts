@@ -59,9 +59,6 @@ export class User extends BaseEntity {
   logo: string;
 
   @Column({ type: "varchar", nullable: false })
-  code_Phone: string;
-
-  @Column({ type: "varchar", nullable: false })
   phone: string;
 
   @Column({ type: "date", nullable: true })
@@ -108,6 +105,9 @@ export class User extends BaseEntity {
   adminCode: string;
 
   @ManyToOne(() => Membership, { nullable: true })
-  @JoinColumn({ name: "activeMembershipId" })
+  @JoinColumn()
   activeMembership: Membership | null;
+
+  @Column({ nullable: true, type: "timestamp" })
+  membershipExpirationDate: Date;
 }

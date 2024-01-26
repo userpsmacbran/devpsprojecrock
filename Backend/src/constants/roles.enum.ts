@@ -3,5 +3,5 @@ export enum ROLES {
   ADMIN = 18,
   EMPRESA = 23,
   EMPLEADOS = 22,
-  CLIENTE = 99
+  CLIENTE = 99,
 }

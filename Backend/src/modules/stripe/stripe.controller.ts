@@ -17,26 +17,25 @@ export class StripeController {
   async createCheckoutSessionSubscription(
     @Body("membershipId") membershipId: number,
     @Body("userId") userId: number
-  ) {
-    try {
-      const session =
-        await this.stripeService.createCheckoutSessionSubscription(
-          membershipId,
-          userId
-        );
-      return { sessionId: session.id };
-    } catch (error) {
-      return { error: error.message };
+  ): Promise<{ sessionId: string } | { error: string }> {
+    const session = await this.stripeService.createCheckoutSessionSubscription(
+      membershipId,
+      userId
+    );
+
+    if ("error" in session) {
+      return { error: "error" };
     }
+
+    return { sessionId: session.id };
   }
 
-  @Post("checkout-session")
+  @Post("checkout-session-subscription")
   async getCheckoutSession(@Body("sessionId") sessionId: string) {
     try {
       const session = await this.stripeService.getCheckoutSession(sessionId);
 
       if (session.payment_status === "paid") {
-        console.log("Pago realizado con éxito");
       }
       return session;
     } catch (error) {
