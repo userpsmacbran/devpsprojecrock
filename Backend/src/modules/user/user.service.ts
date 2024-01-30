@@ -67,6 +67,15 @@ export class UserService {
     return { total, users };
   }
 
+  async getEmployeesByIdCompany(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ["employees"],
+    });
+    if (!user) throw new HttpException("USER_NOT_FOUND", 404);
+    return user.employees;
+  }
+
   async changeState(id: number, body: ChangeStateDto) {
     const { state } = body;
     const user = await this.userRepository.findOne({ where: { id } });

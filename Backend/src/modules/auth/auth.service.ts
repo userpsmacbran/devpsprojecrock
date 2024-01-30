@@ -86,7 +86,6 @@ export class AuthService {
           address: userObjectRegister.address,
           type: type,
           logo: userObjectRegister.logo,
-          code_Phone: userObjectRegister.codePhone,
           phone: userObjectRegister.phone,
           postalCode: userObjectRegister.postalCode,
         };
@@ -118,7 +117,6 @@ export class AuthService {
           address: userObjectRegister.address,
           type: type,
           logo: userObjectRegister.logo,
-          code_Phone: userObjectRegister.codePhone,
           phone: userObjectRegister.phone,
           postalCode: userObjectRegister.postalCode,
         };

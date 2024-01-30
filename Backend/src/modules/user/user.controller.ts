@@ -19,6 +19,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // Get all users (with filters and pagination)
   @Get()
   async findAll(@Query() query: QueryUserDto) {
     const { type, country, city, state_User, skip, take, searchTerm } = query;
@@ -49,16 +50,29 @@ export class UserController {
     return { message: "ok", data: users };
   }
 
+  // Get one user by id
   @Get(":id")
   findOne(@Param("id") id: number) {
     return this.userService.findOne(id);
   }
 
+  //Get all employees by company
+  @Get("/employee/:id")
+  async getEmployeesByIdCompany(@Param("id") id: number) {
+    const employees = await this.userService.getEmployeesByIdCompany(id);
+    return {
+      message: "ok",
+      data: employees,
+    };
+  }
+
+  //Change state user
   @Patch("change-state/:id")
   changeState(@Param("id") id: number, @Body() body: ChangeStateDto) {
     return this.userService.changeState(id, body);
   }
 
+  //Update user
   @Patch(":id")
   async update(@Param("id") id: number, @Body() updateUserDto: UpdateUserDto) {
     return {
@@ -66,12 +80,13 @@ export class UserController {
       data: await this.userService.update(id, updateUserDto),
     };
   }
+
+  @UseGuards(AuthGuard)
   @Delete(":id")
   remove(@Param("id") id: number) {
     return this.userService.remove(id);
   }
 
-  @UseGuards(AuthGuard)
   @Delete("/test/auth/:id")
   removed(@Param("id") id: string) {
     return this.userService.remove(+id);

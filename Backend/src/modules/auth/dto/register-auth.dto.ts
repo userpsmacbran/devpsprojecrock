@@ -40,9 +40,6 @@ export class RegisterAuthDtoBase extends PartialType(LoginAuthDto) {
   logo: string;
 
   @IsString()
-  codePhone: string;
-
-  @IsString()
   phone: string;
 
   @IsOptional()

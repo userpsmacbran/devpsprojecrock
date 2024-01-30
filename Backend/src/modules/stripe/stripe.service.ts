@@ -50,8 +50,8 @@ export class StripeService {
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/subscriptions`,
+      success_url: `http://localhost:5174/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:5174/subscriptions`,
       metadata: {
         userId: userId,
         membershipId: membership.id,
@@ -137,7 +137,7 @@ export class StripeService {
         idMembership
       );
 
-      console.log("response: ", response);
+      console.log("responses: ", response);
     }
   }
 }
