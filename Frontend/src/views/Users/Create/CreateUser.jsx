@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -8,6 +9,8 @@ import Box from "@mui/material/Box";
 import CreateCompanyForm from "../../../components/Users/Create/CreateCompanyForm";
 import { useEffect } from "react";
 import api from "../../../api/api";
+import CreateClientForm from "../../../components/Users/Create/CreateClientForm";
+import CreateModeradorForm from "../../../components/Users/Create/CreateModeradorForm";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,15 +66,18 @@ export default function FullWidthTabs() {
   }, []);
 
   return (
-    <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
-      <AppBar position="static">
+    <Box sx={{ width: "100%" }}>
+      <AppBar position="" sx>
         <Tabs
           value={value}
           onChange={handleChange}
-          indicatorColor="secondary"
           textColor="inherit"
+          sx={{
+            backgroundColor: "#555CB3",
+            fontWeight: "bold",
+            color: "white",
+          }}
           variant="fullWidth"
-          aria-label="full width tabs example"
         >
           <Tab label="Company" {...a11yProps(0)} />
           <Tab label="Client" {...a11yProps(1)} />
@@ -80,13 +86,16 @@ export default function FullWidthTabs() {
       </AppBar>
 
       <TabPanel value={value} index={0} dir={theme.direction}>
-        <CreateCompanyForm />
+        <CreateCompanyForm countries={countries} setCountries={setCountries} />
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        Item Two
+        <CreateClientForm countries={countries} setCountries={setCountries} />
       </TabPanel>
       <TabPanel value={value} index={2} dir={theme.direction}>
-        Item Three
+        <CreateModeradorForm
+          countries={countries}
+          setCountries={setCountries}
+        />
       </TabPanel>
     </Box>
   );

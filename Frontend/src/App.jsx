@@ -36,7 +36,7 @@ function App() {
             <Route path="/users/clients" element={<Clients />} />
             <Route path="/users/companies" element={<Companies />} />
             <Route path="/users/moderators" element={<Moderators />} />
-            <Route path="/users/create" element={<CreateUser />} />
+            <Route path="/users/create-user" element={<CreateUser />} />
             <Route
               path="/users/*"
               element={<div>Page in users not found</div>}

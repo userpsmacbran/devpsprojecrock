@@ -151,6 +151,21 @@ function Memberships() {
                     ))}
                   </Select>
                 </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="type-label">Tipo de Membresía</InputLabel>
+                  <Select
+                    labelId="type-label"
+                    id="type"
+                    name="type"
+                    label="Tipo de Membresía"
+                    value={formData.type}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={10}>BASICO</MenuItem>
+                    <MenuItem value={20}>PLUS</MenuItem>
+                    <MenuItem value={30}>PREMIUM</MenuItem>
+                  </Select>
+                </FormControl>
                 <TextField
                   label="Nombre"
                   id="name"
@@ -186,21 +201,7 @@ function Memberships() {
                     {/* Agregar otras opciones de moneda según sea necesario */}
                   </Select>
                 </FormControl>
-                <FormControl fullWidth>
-                  <InputLabel id="type-label">Tipo de Membresía</InputLabel>
-                  <Select
-                    labelId="type-label"
-                    id="type"
-                    name="type"
-                    label="Tipo de Membresía"
-                    value={formData.type}
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={10}>BASICO</MenuItem>
-                    <MenuItem value={20}>PLUS</MenuItem>
-                    <MenuItem value={30}>PREMIUM</MenuItem>
-                  </Select>
-                </FormControl>
+
                 <Button type="submit" variant="contained" fullWidth>
                   Crear Membresía
                 </Button>

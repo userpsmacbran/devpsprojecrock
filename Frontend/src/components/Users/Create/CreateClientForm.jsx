@@ -6,9 +6,10 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import api from "../../../api/api";
 
-const CreateCompanyForm = ({ countries, setCountries }) => {
+const CreateClientForm = ({ countries, setCountries }) => {
   const [userObject, setUserObject] = useState({
     name: "",
+    lastname: "",
     countryId: 0,
     country: "",
     state: "",
@@ -17,13 +18,12 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
     stateId: 0,
     address: "",
     phone: "",
-    ruc: "",
     postalCode: "",
     password: "",
     email: "",
     logo: "logo-example.jpg",
     birthDate: "",
-    type: 23,
+    type: 99,
     codePhone: "+58",
   });
 
@@ -102,7 +102,7 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
       !userObject.email ||
       !userObject.password ||
       !userObject.phone ||
-      !userObject.ruc ||
+      !userObject.lastname ||
       !userObject.postalCode ||
       !userObject.birthDate ||
       !userObject.country ||
@@ -157,9 +157,9 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
 
     const dataToSend = {
       name: updatedUserObject.name,
+      lastName: updatedUserObject.lastname,
       address: updatedUserObject.address,
       phone: updatedUserObject.phone,
-      ruc: updatedUserObject.ruc,
       postalCode: updatedUserObject.postalCode,
       password: updatedUserObject.password,
       email: updatedUserObject.email,
@@ -172,23 +172,24 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
       stateId: updatedUserObject.stateId,
     };
 
+    alert(dataToSend.type);
     try {
       const response = await api.post("/auth/register", dataToSend);
-      setMessage({ text: "Empresa creada con éxito", type: "success" });
+      setMessage({ text: "Cliente creado con éxito", type: "success" });
       setUserObject({
         name: "",
+        lastname: "",
         countryId: "",
         cityId: "",
         stateId: "",
         address: "",
         phone: "",
-        ruc: "",
         postalCode: "",
         password: "",
         email: "",
         logo: "logo-example.png",
         birthDate: "",
-        type: 23,
+        type: 99,
         codePhone: "+58",
       });
       setSelectedCountry("");
@@ -212,7 +213,7 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
       <div className="flex items-center justify-center m-2">
         <div className="w-1/2">
           <h2 className="text-center text-[#555CB3] text-2xl font-bold ">
-            Create Company
+            Create Client
           </h2>
         </div>
         <Grid item xs={12} className="w-1/2">
@@ -241,14 +242,15 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
             onChange={handleChange}
           />
         </Grid>
+
         <Grid item xs={12}>
           <TextField
-            label="Address"
+            label="Last name"
             variant="outlined"
             fullWidth
             size="small"
-            name="address"
-            value={userObject.address}
+            name="lastname"
+            value={userObject.lastname}
             onChange={handleChange}
           />
         </Grid>
@@ -265,12 +267,12 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            label="RUC"
+            label="Address"
             variant="outlined"
             fullWidth
             size="small"
-            name="ruc"
-            value={userObject.ruc}
+            name="address"
+            value={userObject.address}
             onChange={handleChange}
           />
         </Grid>
@@ -402,4 +404,4 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
   );
 };
 
-export default CreateCompanyForm;
+export default CreateClientForm;

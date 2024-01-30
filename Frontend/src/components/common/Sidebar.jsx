@@ -61,7 +61,7 @@ function Sidebar({ handleDrawerToggle }) {
           icon: <SupervisorAccountIcon />,
         },
         {
-          id: "create",
+          id: "create-user",
           translationKey: "Crear",
           icon: <DashboardIcon />,
         },
@@ -95,7 +95,7 @@ function Sidebar({ handleDrawerToggle }) {
         },
         {
           id: "delete",
-          translationKey: "menu_membership_delete",
+          translationKey: "menu_membership_",
           icon: <PersonIcon />,
         },
       ],
@@ -103,7 +103,7 @@ function Sidebar({ handleDrawerToggle }) {
   ];
 
   return (
-    <div className="bg-[#555CB3] h-screen flex flex-col">
+    <div className="bg-[#555CB3] overflow-y-auto h-full flex flex-col">
       <div className="flex mx-8 justify-center items-center space-x-2 my-8">
         <img src="/logo.png" className="h-12 w-12" alt="" />
         <h2
