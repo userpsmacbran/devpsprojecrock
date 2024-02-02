@@ -114,5 +114,8 @@ export class User extends BaseEntity {
   membershipExpirationDate: Date;
 
   @OneToMany(() => Employee, (employee) => employee.user)
-  employees: Employee[]; // Relación con empleados
+  employees: Employee[]; 
+
+  @Column({ default: false })
+  isDelete: boolean;
 }

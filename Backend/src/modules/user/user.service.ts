@@ -32,7 +32,7 @@ export class UserService {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined) {
           if (key === "country") {
-            qb.andWhere("user.countryId = :countryId", { countryId: value }); // Cambia a filtrar por ID de country
+            qb.andWhere("user.countryId = :countryId", { countryId: value });
           } else if (key === "city") {
             qb.andWhere(`user.${key} ILIKE :${key}`, { [key]: `%${value}%` });
           } else if (key === "state_User") {
@@ -47,6 +47,8 @@ export class UserService {
           }
         }
       });
+
+      qb.andWhere("user.isDelete = :isDelete", { isDelete: false });
     });
 
     if (skip !== undefined) {
@@ -91,6 +93,18 @@ export class UserService {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new HttpException("USER_NOT_FOUND", 404);
 
+    const userFound = await this.userRepository.findOne({
+      where: { email: updateUserDto.email },
+    });
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const userFound = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
+      });
+      if (userFound && userFound.id !== id) {
+        throw new HttpException("EMAIL_ALREADY_EXISTS", 400);
+      }
+    }
+
     const updatedUser = this.userRepository.merge(user, updateUserDto);
 
     return this.userRepository.save(updatedUser);
@@ -104,15 +118,17 @@ export class UserService {
     return { message: "Ok", data: user };
   }
 
-  async remove(id: number) {
-    const user = this.userRepository.findOne({ where: { id } });
+  async softDelete(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new HttpException("USER_NOT_FOUND", 404);
 
-    const idUser = (await user).id;
-    await this.userRepository.delete(id);
+    // Actualizar la propiedad isDelete a true en lugar de eliminar físicamente el registro
+    user.isDelete = true;
+    await this.userRepository.save(user);
+
     return {
       message: "Ok",
-      data: `User delete successfully: ${idUser}`,
+      data: `User soft-deleted successfully: ${user.id}`,
     };
   }
 
