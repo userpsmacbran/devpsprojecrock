@@ -48,6 +48,7 @@ export class StripeController {
     @Headers("stripe-signature") signature: string,
     @Req() request: any
   ) {
+    console.log("Hola estan en el webhook");
     try {
       if (!signature) {
         throw new BadRequestException("Missing stripe-signature header");
