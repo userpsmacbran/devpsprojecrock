@@ -17,11 +17,11 @@ import React, { useEffect } from "react";
 
 function TableComponent({
   handleToggleChange,
-  companies,
+  clients,
   loading,
   openDeleteModal,
   error,
-  setCompanies,
+  setClients,
   openEditModalCompany,
 }) {
   const { t } = useTranslation();
@@ -30,15 +30,15 @@ function TableComponent({
 
   useEffect(() => {
     // Ordenar el array de companies
-    const sortedCompanies = [...companies].sort((a, b) => {
+    const sortedCompanies = [...clients].sort((a, b) => {
       if (order === "asc") {
         return a[orderBy] > b[orderBy] ? 1 : -1;
       } else {
         return a[orderBy] < b[orderBy] ? 1 : -1;
       }
     });
-    setCompanies(sortedCompanies);
-  }, [orderBy, order, setCompanies]);
+    setClients(sortedCompanies);
+  }, [orderBy, order, setClients]);
 
   const handleSortIconClick = (column) => {
     const isAsc = orderBy === column && order === "asc";
@@ -100,14 +100,14 @@ function TableComponent({
           </TableRow>
         </TableHead>
         <TableBody>
-          {companies.length === 0 && !error ? (
+          {clients.length === 0 && !error ? (
             <TableRow>
               <TableCell colSpan={7} align="center">
                 No hay registros
               </TableCell>
             </TableRow>
           ) : (
-            companies.map((company) => (
+            clients.map((company) => (
               <TableRow key={company.id}>
                 <TableCell>{company.id}</TableCell>
                 <TableCell>{company.name}</TableCell>

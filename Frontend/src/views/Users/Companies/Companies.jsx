@@ -93,8 +93,7 @@ const Companies = () => {
   };
 
   // Modal functions
-  const openEditModal = (company) => {
-    setSelectedCompany(company);
+  const openEditModal = () => {
     setIsEditModalOpen(true);
   };
 
@@ -123,6 +122,18 @@ const Companies = () => {
     setPage(0);
   };
 
+  const fetchSelectedCompanyDetails = async (companyId) => {
+    try {
+      const response = await api.get(`/user/${companyId}`);
+      setSelectedCompany(response.data.data);
+    } catch (error) {
+      console.error("Error fetching selected company details:", error);
+    }
+  };
+  const openEditModalCompany = async (company) => {
+    await fetchSelectedCompanyDetails(company.id);
+    openEditModal(company);
+  };
   return (
     <section style={{ overflow: "auto" }}>
       <h2 className="font-bold text-[#555CB3] text-2xl my-2">
@@ -144,6 +155,7 @@ const Companies = () => {
         handleChangePage={handleChangePage}
         error={error}
         setCompanies={setCompanies}
+        openEditModalCompany={openEditModalCompany}
       />
       <TablePagination
         component="div"
