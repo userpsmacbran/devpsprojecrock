@@ -13,7 +13,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SidebarItemLogout from "./SidebarItemLogout";
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 
 import { useAuth } from "../../auth/AuthProvider";
 import { useState } from "react";
@@ -61,7 +61,7 @@ function Sidebar({ handleDrawerToggle }) {
           icon: <SupervisorAccountIcon />,
         },
         {
-          id: "create",
+          id: "create-user",
           translationKey: "Crear",
           icon: <DashboardIcon />,
         },
@@ -82,12 +82,28 @@ function Sidebar({ handleDrawerToggle }) {
       id: "memberships",
       translationKey: "menu_memberships",
       icon: <AccountBalanceIcon />,
-      subItems: null,
-    }
+      subItems: [
+        {
+          id: "create",
+          translationKey: "menu_membership_create",
+          icon: <BusinessIcon />,
+        },
+        {
+          id: "edit",
+          translationKey: "menu_membership_edit",
+          icon: <PersonIcon />,
+        },
+        {
+          id: "delete",
+          translationKey: "menu_membership_",
+          icon: <PersonIcon />,
+        },
+      ],
+    },
   ];
 
   return (
-    <div className="bg-[#555CB3] h-screen flex flex-col">
+    <div className="bg-[#555CB3] overflow-y-auto h-full flex flex-col">
       <div className="flex mx-8 justify-center items-center space-x-2 my-8">
         <img src="/logo.png" className="h-12 w-12" alt="" />
         <h2

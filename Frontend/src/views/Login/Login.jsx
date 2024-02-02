@@ -64,7 +64,6 @@ function Login() {
 
     try {
       const response = await api.post("/auth/login/admins", formData);
-      console.log("Usuario logueado con éxito", response.data);
       if (response.data.token) {
         auth.saveUser(response.data);
         goTo("/dashboard");

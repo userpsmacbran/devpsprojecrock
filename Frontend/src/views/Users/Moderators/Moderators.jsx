@@ -1,166 +1,186 @@
-import { useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import Modal from "@mui/material/Modal";
+import api from "../../../api/api";
+import ModalEdit from "../../../components/Users/Companies/ModalEdit";
+import TableComponent from "../../../components/Users/Companies/Table";
+import InputsBox from "../../../components/Users/Companies/InputsBox";
+import TablePagination from "@mui/material/TablePagination";
+import ModalDelete from "../../../components/Users/Companies/ModalDelete";
 
-const clientsData = [
-  {
-    id: 1,
-    name: "Cliente A",
-    email: "clientA@example.com",
-    country: "USA",
-    state: 1,
-    registrationDate: "2023-01-15",
-  },
-  {
-    id: 2,
-    name: "Cliente B",
-    email: "clientB@example.com",
-    country: "Canada",
-    state: 0,
-    registrationDate: "2022-08-20",
-  },
-  {
-    id: 3,
-    name: "Cliente C",
-    email: "clientC@example.com",
-    country: "UK",
-    state: 1,
-    registrationDate: "2022-11-05",
-  },
-  {
-    id: 4,
-    name: "Cliente D",
-    email: "clientD@example.com",
-    country: "Australia",
-    state: 1,
-    registrationDate: "2023-02-28",
-  },
-  {
-    id: 5,
-    name: "Cliente E",
-    email: "clientE@example.com",
-    country: "Germany",
-    state: 0,
-    registrationDate: "2022-05-10",
-  },
-  {
-    id: 6,
-    name: "Cliente F",
-    email: "clientF@example.com",
-    country: "France",
-    state: 1,
-    registrationDate: "2022-09-17",
-  },
-  {
-    id: 7,
-    name: "Cliente G",
-    email: "clientG@example.com",
-    country: "Brazil",
-    state: 0,
-    registrationDate: "2022-12-08",
-  },
-  {
-    id: 8,
-    name: "Cliente H",
-    email: "clientH@example.com",
-    country: "Japan",
-    state: 1,
-    registrationDate: "2023-03-12",
-  },
-  {
-    id: 9,
-    name: "Cliente I",
-    email: "clientI@example.com",
-    country: "South Korea",
-    state: 1,
-    registrationDate: "2022-06-25",
-  },
-  {
-    id: 10,
-    name: "Cliente J",
-    email: "clientJ@example.com",
-    country: "Mexico",
-    state: 0,
-    registrationDate: "2022-10-30",
-  },
-];
+const Companies = () => {
+  // Data table states
+  const [companies, setCompanies] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
 
-const Moderators = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  // Loading and error table states
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState(undefined);
+  const [stateCompany, setStateCompany] = useState(undefined);
+  const [country, setCountry] = useState(undefined);
+
+  // Modal states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [deletedUserId, setDeletedUserId] = useState(null);
+
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const { t } = useTranslation();
 
-  const filteredClients = clientsData.filter((company) =>
-    company.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/user", {
+          params: {
+            type: 18,
+            take: rowsPerPage,
+            skip: page * rowsPerPage,
+            searchTerm: searchTerm?.trim() ? searchTerm : undefined,
+            state_User: stateCompany ? stateCompany : undefined,
+            country: country ? country : undefined,
+          },
+        });
+        setCompanies(response.data.data.users);
+        setTotalCount(response.data.data.total);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(
+          "Hubo un error al obtener los datos. Por favor, intenta de nuevo."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [page, rowsPerPage, deletedUserId, searchTerm, stateCompany, country]);
+
+  // Change user state (active/inactive/banned)
+  const handleToggleChange = async (id, currentState) => {
+    try {
+      setLoading(true);
+      const newState = currentState;
+
+      await api.patch(`/user/change-state/${id}`, { state: newState });
+
+      setCompanies((prevCompanies) =>
+        prevCompanies.map((company) =>
+          company.id === id ? { ...company, state_User: newState } : company
+        )
+      );
+    } catch (error) {
+      console.error("Error changing user state:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update local company
+  const updateLocalCompany = (companyId, updatedData) => {
+    setCompanies((prevCompanies) =>
+      prevCompanies.map((company) =>
+        company.id === companyId ? { ...company, ...updatedData } : company
+      )
+    );
+  };
+
+  // Modal functions
+  const openEditModal = (company) => {
+    setSelectedCompany(company);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setSelectedCompany(null);
+    setIsEditModalOpen(false);
+  };
+
+  const openDeleteModal = (company) => {
+    setSelectedCompany(company);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setSelectedCompany(null);
+    setIsDeleteModalOpen(false);
+  };
+
+  // Pagination functions
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
-    <div>
-      <h2 className="font-bold text-[#555CB3] text-2xl mb-2">
+    <section style={{ overflow: "auto" }}>
+      <h2 className="font-bold text-[#555CB3] text-2xl my-2">
         {t("users_moderators_title")}
       </h2>
 
-      <Box
-        sx={{
-          display: "flex",
-          backgroundColor: "#f0f0f0",
-          borderRadius: "10px",
-          width: "50%",
-          marginBottom: "10px",
-        }}
+      <InputsBox
+        setCompanies={setCompanies}
+        setSearchTerm={setSearchTerm}
+        setStateCompany={setStateCompany}
+        setCountry={setCountry}
+      />
+      <TableComponent
+        loading={loading}
+        companies={companies}
+        handleToggleChange={handleToggleChange}
+        openEditModal={openEditModal}
+        openDeleteModal={openDeleteModal}
+        handleChangePage={handleChangePage}
+        error={error}
+        setCompanies={setCompanies}
+      />
+      <TablePagination
+        component="div"
+        count={totalCount}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10]}
+        labelRowsPerPage={t("table_row_per_page")}
+      />
+      <Modal
+        open={isEditModalOpen}
+        onClose={() => closeEditModal()}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <IconButton sx={{ color: "gray", marginX: "3px" }}>
-          <SearchIcon />
-        </IconButton>
-        <InputBase
-          placeholder="Buscar Moderadores"
-          inputProps={{ "aria-label": "search" }}
-          sx={{
-            ml: 1,
-            borderRadius: "50px",
-            padding: "8px",
-            width: "100%",
-          }}
+        <ModalEdit
+          selectedCompany={selectedCompany}
+          updateLocalCompany={updateLocalCompany}
+          onClose={closeEditModal}
         />
-      </Box>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead className="bg-gray-200">
-            <TableRow>
-              <TableCell>NAME</TableCell>
-              <TableCell>CORREO</TableCell>
-              <TableCell>PAIS</TableCell>
-              <TableCell>STATE</TableCell>
-              <TableCell>REGISTRO</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredClients.map((company) => (
-              <TableRow key={company.id}>
-                <TableCell>{company.name}</TableCell>
-                <TableCell>{company.email}</TableCell>
-                <TableCell>{company.country}</TableCell>
-                <TableCell>
-                  {company.state === 1 ? "ACTIVO" : "INACTIVO"}
-                </TableCell>
-                <TableCell>{company.registrationDate}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+      </Modal>
+      <Modal
+        open={isDeleteModalOpen}
+        onClose={() => closeDeleteModal()}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <ModalDelete
+          onClose={closeDeleteModal}
+          selectedCompany={selectedCompany}
+          onUserDeleted={setDeletedUserId}
+        />
+      </Modal>
+    </section>
   );
 };
 
-export default Moderators;
+export default Companies;

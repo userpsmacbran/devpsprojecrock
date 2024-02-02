@@ -40,7 +40,6 @@ export function AuthProvider({ children }) {
   }
 
   function checkTokenExpiration() {
-    console.log("checkToken");
     const expirationDate = new Date(localStorage.getItem("tokenExpiration"));
     if (expirationDate < new Date()) {
       // Token expirado, limpia el almacenamiento

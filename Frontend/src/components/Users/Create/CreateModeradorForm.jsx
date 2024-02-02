@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import api from "../../../api/api";
 
-const CreateCompanyForm = ({ countries, setCountries }) => {
+const CreateModeradorForm = ({ countries, setCountries }) => {
   const [userObject, setUserObject] = useState({
     name: "",
     countryId: 0,
@@ -17,13 +17,12 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
     stateId: 0,
     address: "",
     phone: "",
-    ruc: "",
     postalCode: "",
     password: "",
     email: "",
     logo: "logo-example.jpg",
     birthDate: "",
-    type: 23,
+    type: 18,
     codePhone: "+58",
   });
 
@@ -102,7 +101,6 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
       !userObject.email ||
       !userObject.password ||
       !userObject.phone ||
-      !userObject.ruc ||
       !userObject.postalCode ||
       !userObject.birthDate ||
       !userObject.country ||
@@ -159,7 +157,6 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
       name: updatedUserObject.name,
       address: updatedUserObject.address,
       phone: updatedUserObject.phone,
-      ruc: updatedUserObject.ruc,
       postalCode: updatedUserObject.postalCode,
       password: updatedUserObject.password,
       email: updatedUserObject.email,
@@ -174,7 +171,7 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
 
     try {
       const response = await api.post("/auth/register", dataToSend);
-      setMessage({ text: "Empresa creada con éxito", type: "success" });
+      setMessage({ text: "Moderador creado con éxito", type: "success" });
       setUserObject({
         name: "",
         countryId: "",
@@ -182,13 +179,12 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
         stateId: "",
         address: "",
         phone: "",
-        ruc: "",
         postalCode: "",
         password: "",
         email: "",
         logo: "logo-example.png",
         birthDate: "",
-        type: 23,
+        type: 18,
         codePhone: "+58",
       });
       setSelectedCountry("");
@@ -212,7 +208,7 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
       <div className="flex items-center justify-center m-2">
         <div className="w-1/2">
           <h2 className="text-center text-[#555CB3] text-2xl font-bold ">
-            Create Company
+            Create Moderador
           </h2>
         </div>
         <Grid item xs={12} className="w-1/2">
@@ -263,17 +259,7 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={6}>
-          <TextField
-            label="RUC"
-            variant="outlined"
-            fullWidth
-            size="small"
-            name="ruc"
-            value={userObject.ruc}
-            onChange={handleChange}
-          />
-        </Grid>
+
         <Grid item xs={6}>
           <TextField
             label="Postal Code"
@@ -402,4 +388,4 @@ const CreateCompanyForm = ({ countries, setCountries }) => {
   );
 };
 
-export default CreateCompanyForm;
+export default CreateModeradorForm;

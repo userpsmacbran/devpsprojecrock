@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from "@nestjs/common";
+ import { HttpException, Injectable } from "@nestjs/common";
 import { LoginAuthDto } from "./dto/login-auth.dto";
 import { RegisterAuthDtoBase } from "./dto/register-auth.dto";
 import { hash, compare } from "bcrypt";
@@ -10,7 +10,6 @@ import { NAME_MODEPLAY, ROLES, STATES } from "src/constants";
 import { ModeplayService } from "../modeplay/modeplay.service";
 import { WalletService } from "../wallet/wallet.service";
 import { isValidDateFormat } from "../../utils/isValidDateFormat";
-
 import { Logger } from "@nestjs/common";
 import { EmailService } from "../email/email.service";
 import { CountryService } from "../country/country.service";
@@ -37,7 +36,6 @@ export class AuthService {
   async register(userObjectRegister: RegisterAuthDtoBase) {
     try {
       const { password, email, type, ruc, birthDate } = userObjectRegister;
-      console.log(userObjectRegister);
       if (type !== ROLES.EMPRESA) {
         if (!isValidDateFormat(birthDate)) {
           return new HttpException("DATE_FORMAT_IS_INVALID", 400);
@@ -86,7 +84,6 @@ export class AuthService {
           address: userObjectRegister.address,
           type: type,
           logo: userObjectRegister.logo,
-          code_Phone: userObjectRegister.codePhone,
           phone: userObjectRegister.phone,
           postalCode: userObjectRegister.postalCode,
         };
@@ -118,7 +115,6 @@ export class AuthService {
           address: userObjectRegister.address,
           type: type,
           logo: userObjectRegister.logo,
-          code_Phone: userObjectRegister.codePhone,
           phone: userObjectRegister.phone,
           postalCode: userObjectRegister.postalCode,
         };

@@ -7,6 +7,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -19,6 +20,7 @@ import { State } from "./state.entity";
 import { City } from "./city.entity";
 import { Membership } from "./membership.entity";
 import { MembershipTypes } from "src/constants/membership.enum";
+import { Employee } from "./employee.entity";
 @Entity("user")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -110,4 +112,10 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true, type: "timestamp" })
   membershipExpirationDate: Date;
+
+  @OneToMany(() => Employee, (employee) => employee.user)
+  employees: Employee[]; 
+
+  @Column({ default: false })
+  isDelete: boolean;
 }
