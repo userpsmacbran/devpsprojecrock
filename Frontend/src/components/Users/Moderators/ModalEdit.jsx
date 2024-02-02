@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
   const { t } = useTranslation();
+
   const [editedCompany, setEditedCompany] = useState({
     name: selectedCompany.name,
     email: selectedCompany.email,
@@ -27,7 +28,6 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
 
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [countries, setCountries] = useState([]);
-
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [error, setError] = useState(null);
@@ -174,7 +174,7 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
           component="div"
           sx={{ color: "#555CB3", fontWeight: "bold" }}
         >
-          {t("edit_company_profile")}
+          {t("edit_moderator_profile")}
         </Typography>
         <Avatar
           alt={selectedCompany.name}
@@ -219,15 +219,7 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
             onChange={(e) => handleFieldChange("address", e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="RUC"
-            value={editedCompany.ruc}
-            fullWidth
-            size="small"
-            onChange={(e) => handleFieldChange("ruc", e.target.value)}
-          />
-        </Grid>
+
         {isEditingLocation ? (
           <>
             <Grid item xs={12} sm={6}>

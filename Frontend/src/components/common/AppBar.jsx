@@ -42,56 +42,29 @@ function AppBarComponent({ drawerWidth, handleDrawerToggle }) {
 
         <Box
           sx={{
-            display: { xs: "flex", sm: "flex" },
+            display: "flex",
             alignItems: "center",
-            width: "100%",
             justifyContent: "space-between",
+            width: "100%",
           }}
         >
-          {/* Selector de idioma */}
-          <LanguageSwitcher />
-
-          {/* Campo de búsqueda */}
+          {/* Sección izquierda del AppBar */}
           <Box
             sx={{
-              display: { xs: "none", sm: "flex" },
+              display: "flex",
               alignItems: "center",
-              backgroundColor: "#f5f5f5",
-              borderRadius: "50px",
-              width: "260px",
-              marginLeft: "20px",
+            }}
+          ></Box>
+
+          {/* Sección derecha del AppBar */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            <IconButton sx={{ color: "gray", marginX: "3px" }}>
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              placeholder="Busqueda"
-              inputProps={{ "aria-label": "search" }}
-              sx={{
-                ml: 1,
-                borderRadius: "50px",
-                padding: "8px",
-                width: "100%",
-              }}
-              endAdornment={
-                <InputAdornment position="end">
-                  <MicIcon sx={{ color: "gray" }} />
-                </InputAdornment>
-              }
-            />
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Notificaciones */}
-            <IconButton
-              sx={{
-                marginX: { xs: "0px", sm: "10px" },
-                marginLeft: { xs: "0px", sm: "50px" },
-              }}
-            >
-              <NotificationsIcon />
-            </IconButton>
+            {/* Selector de idioma */}
+            <LanguageSwitcher />
             {/* Nombre y rol */}
             <Box sx={{ mr: 1, ml: 1, textAlign: "right" }}>
               <Typography

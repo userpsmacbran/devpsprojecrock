@@ -2,16 +2,15 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "@mui/material/Modal";
 import api from "../../../api/api";
-import ModalEdit from "../../../components/Users/Companies/ModalEdit";
-import TableComponent from "../../../components/Users/Companies/Table";
-import InputsBox from "../../../components/Users/Companies/InputsBox";
+import ModalEdit from "../../../components/Users/Clients/ModalEdit";
+import TableComponent from "../../../components/Users/Clients/Table";
+import InputsBox from "../../../components/Users/Clients/InputsBox";
 import TablePagination from "@mui/material/TablePagination";
-import ModalDelete from "../../../components/Users/Companies/ModalDelete";
+import ModalDelete from "../../../components/Users/Clients/ModalDelete";
 
-const Companies = () => {
-  const role = "company";
+const Clients = () => {
   // Data table states
-  const [companies, setCompanies] = useState([]);
+  const [clients, setClients] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
 
   // Loading and error table states
@@ -49,7 +48,7 @@ const Companies = () => {
             country: country ? country : undefined,
           },
         });
-        setCompanies(response.data.data.users);
+        setClients(response.data.data.users);
         setTotalCount(response.data.data.total);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -72,7 +71,7 @@ const Companies = () => {
 
       await api.patch(`/user/change-state/${id}`, { state: newState });
 
-      setCompanies((prevCompanies) =>
+      setClients((prevCompanies) =>
         prevCompanies.map((company) =>
           company.id === id ? { ...company, state_User: newState } : company
         )
@@ -86,7 +85,7 @@ const Companies = () => {
 
   // Update local company
   const updateLocalCompany = (companyId, updatedData) => {
-    setCompanies((prevCompanies) =>
+    setClients((prevCompanies) =>
       prevCompanies.map((company) =>
         company.id === companyId ? { ...company, ...updatedData } : company
       )
@@ -94,8 +93,7 @@ const Companies = () => {
   };
 
   // Modal functions
-  const openEditModal = (company) => {
-    setSelectedCompany(company);
+  const openEditModal = () => {
     setIsEditModalOpen(true);
   };
 
@@ -124,6 +122,19 @@ const Companies = () => {
     setPage(0);
   };
 
+  const fetchSelectedCompanyDetails = async (companyId) => {
+    try {
+      const response = await api.get(`/user/${companyId}`);
+      setSelectedCompany(response.data.data);
+    } catch (error) {
+      console.error("Error fetching selected company details:", error);
+    }
+  };
+  const openEditModalCompany = async (company) => {
+    await fetchSelectedCompanyDetails(company.id);
+    openEditModal(company);
+  };
+
   return (
     <section style={{ overflow: "auto" }}>
       <h2 className="font-bold text-[#555CB3] text-2xl my-2">
@@ -131,20 +142,20 @@ const Companies = () => {
       </h2>
 
       <InputsBox
-        setCompanies={setCompanies}
         setSearchTerm={setSearchTerm}
         setStateCompany={setStateCompany}
         setCountry={setCountry}
       />
       <TableComponent
         loading={loading}
-        companies={companies}
+        clients={clients}
         handleToggleChange={handleToggleChange}
         openEditModal={openEditModal}
         openDeleteModal={openDeleteModal}
         handleChangePage={handleChangePage}
         error={error}
-        setCompanies={setCompanies}
+        setClients={setClients}
+        openEditModalCompany={openEditModalCompany}
       />
       <TablePagination
         component="div"
@@ -184,4 +195,4 @@ const Companies = () => {
   );
 };
 
-export default Companies;
+export default Clients;

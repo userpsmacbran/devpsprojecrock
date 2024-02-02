@@ -22,12 +22,11 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
     postalCode: selectedCompany.postalCode,
     country: selectedCompany.country.id,
     countryName: selectedCompany.country.name,
-    ruc: selectedCompany.ruc,
+    last_Name: selectedCompany.last_Name,
   });
 
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [countries, setCountries] = useState([]);
-
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [error, setError] = useState(null);
@@ -174,7 +173,7 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
           component="div"
           sx={{ color: "#555CB3", fontWeight: "bold" }}
         >
-          {t("edit_company_profile")}
+          {t("edit_client_profile")}
         </Typography>
         <Avatar
           alt={selectedCompany.name}
@@ -190,6 +189,15 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
             fullWidth
             size="small"
             onChange={(e) => handleFieldChange("name", e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Last Name"
+            value={editedCompany.last_Name}
+            fullWidth
+            size="small"
+            onChange={(e) => handleFieldChange("last_Name", e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -219,15 +227,7 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
             onChange={(e) => handleFieldChange("address", e.target.value)}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="RUC"
-            value={editedCompany.ruc}
-            fullWidth
-            size="small"
-            onChange={(e) => handleFieldChange("ruc", e.target.value)}
-          />
-        </Grid>
+
         {isEditingLocation ? (
           <>
             <Grid item xs={12} sm={6}>

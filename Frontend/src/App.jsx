@@ -13,6 +13,9 @@ import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import CreateUser from "./views/Users/Create/CreateUser";
 import Memberships from "./views/Memberships/Memberships";
 import EditMemberships from "./views/Memberships/Edit/EditMemberships";
+import Country from "./views/Ubications/Country/Country";
+import State from "./views/Ubications/State/State";
+import City from "./views/Ubications/City/City";
 
 function App() {
   return (
@@ -37,6 +40,9 @@ function App() {
             <Route path="/users/companies" element={<Companies />} />
             <Route path="/users/moderators" element={<Moderators />} />
             <Route path="/users/create-user" element={<CreateUser />} />
+            <Route path="/ubications/country" element={<Country />} />
+            <Route path="/ubications/state" element={<State />} />
+            <Route path="/ubications/city" element={<City />} />
             <Route
               path="/users/*"
               element={<div>Page in users not found</div>}

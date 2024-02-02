@@ -100,6 +100,28 @@ function Sidebar({ handleDrawerToggle }) {
         },
       ],
     },
+    {
+      id: "ubications",
+      translationKey: "menu_ubications",
+      icon: <AccountBalanceIcon />,
+      subItems: [
+        {
+          id: "country",
+          translationKey: "menu_ubications_country",
+          icon: <BusinessIcon />,
+        },
+        {
+          id: "state",
+          translationKey: "menu_ubications_state",
+          icon: <PersonIcon />,
+        },
+        {
+          id: "city",
+          translationKey: "menu_ubications_city",
+          icon: <PersonIcon />,
+        },
+      ],
+    },
   ];
 
   return (

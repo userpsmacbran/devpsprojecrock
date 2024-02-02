@@ -17,12 +17,12 @@ import React, { useEffect } from "react";
 
 function TableComponent({
   handleToggleChange,
-  companies,
+  moderators,
   loading,
-  openEditModal,
   openDeleteModal,
   error,
-  setCompanies,
+  setModerators,
+  openEditModalCompany,
 }) {
   const { t } = useTranslation();
   const [orderBy, setOrderBy] = React.useState(""); // Estado para la columna por la cual se está ordenando
@@ -30,15 +30,15 @@ function TableComponent({
 
   useEffect(() => {
     // Ordenar el array de companies
-    const sortedCompanies = [...companies].sort((a, b) => {
+    const sortedCompanies = [...moderators].sort((a, b) => {
       if (order === "asc") {
         return a[orderBy] > b[orderBy] ? 1 : -1;
       } else {
         return a[orderBy] < b[orderBy] ? 1 : -1;
       }
     });
-    setCompanies(sortedCompanies);
-  }, [orderBy, order, setCompanies]);
+    setModerators(sortedCompanies);
+  }, [orderBy, order, setModerators]);
 
   const handleSortIconClick = (column) => {
     const isAsc = orderBy === column && order === "asc";
@@ -100,14 +100,14 @@ function TableComponent({
           </TableRow>
         </TableHead>
         <TableBody>
-          {companies.length === 0 && !error ? (
+          {moderators.length === 0 && !error ? (
             <TableRow>
               <TableCell colSpan={7} align="center">
                 No hay registros
               </TableCell>
             </TableRow>
           ) : (
-            companies.map((company) => (
+            moderators.map((company) => (
               <TableRow key={company.id}>
                 <TableCell>{company.id}</TableCell>
                 <TableCell>{company.name}</TableCell>
@@ -128,7 +128,7 @@ function TableComponent({
                 </TableCell>
                 <TableCell>28-05-2002</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => openEditModal(company)}>
+                  <IconButton onClick={() => openEditModalCompany(company)}>
                     <EditIcon className="text-blue-500" />
                   </IconButton>
                   <IconButton onClick={() => openDeleteModal(company)}>
