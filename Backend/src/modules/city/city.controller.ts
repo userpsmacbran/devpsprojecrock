@@ -7,8 +7,13 @@ export class CityController {
   constructor(private readonly CityService: CityService) {}
 
   @Get(":stateId")
-  findAllByStateId(@Param("stateId") stateId: number) {
-    return this.CityService.findAllByStateId(stateId);
+  findAllByStateId(
+    @Param("stateId") stateId: number,
+    @Query("take") take?: number,
+    @Query("skip") skip?: number,
+    @Query("name") name?: string
+  ) {
+    return this.CityService.findAllByStateId(stateId, take, skip, name);
   }
 
   @Post()

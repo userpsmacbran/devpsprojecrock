@@ -6,10 +6,17 @@ import { QueryYoutube } from "./dto/Query.dto";
 export class YoutubeController {
   constructor(private readonly youtubeService: YoutubeService) {}
 
-  @Get()
-  async findByTitle(@Query() query: QueryYoutube) {
-    const { title, type } = query;
-    return await this.youtubeService.findByTitle(title, Number(type));
+  @Get("/search")
+  async findByTitle(
+    @Query("title") title: string,
+    @Query("type") type: number
+  ) {
+    try {
+      const videos = await this.youtubeService.searchVideosByTitle(title, type);
+      return { videos };
+    } catch (error) {
+      return { error: error.message };
+    }
   }
 
   @Get("duration")

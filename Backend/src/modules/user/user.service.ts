@@ -124,6 +124,7 @@ export class UserService {
 
     // Actualizar la propiedad isDelete a true en lugar de eliminar físicamente el registro
     user.isDelete = true;
+    user.email = `${user.email}-deleted`; 
     await this.userRepository.save(user);
 
     return {
