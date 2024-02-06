@@ -1,23 +1,50 @@
-import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+} from "@nestjs/common";
 import { CountryService } from "./country.service";
 import { CreateCountryDto } from "./dto/create-country.dto";
 
 @Controller("country")
 export class CountryController {
-  constructor(private readonly CountryService: CountryService) {}
+  constructor(private readonly countryService: CountryService) {}
 
   @Get()
-  findAll() {
-    return this.CountryService.findAll();
+  findAll(
+    @Query("take") take?: number,
+    @Query("skip") skip?: number,
+    @Query("name") name?: string
+  ) {
+    return this.countryService.findAll(take, skip, name);
   }
-
+  @Get("/selects")
+  findAllSelects() {
+    return this.countryService.findAllSelects();
+  }
   @Get(":id")
   findOne(@Param("id") id: number) {
-    return this.CountryService.findOne(id);
+    return this.countryService.findOne(id);
+  }
+
+  @Patch(":id")
+  update(@Param("id") id: number, @Body() body: CreateCountryDto) {
+    return this.countryService.update(id, body);
   }
 
   @Post()
   create(@Body() body: CreateCountryDto) {
-    return this.CountryService.create(body);
+    return this.countryService.create(body);
+  }
+
+  @Put(":id")
+  toggleActive(@Param("id") id: number) {
+    return this.countryService.toggleActive(id);
   }
 }

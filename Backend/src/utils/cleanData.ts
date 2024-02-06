@@ -26,6 +26,7 @@ const cleanObj = async (dataRaw: any) => {
 
   const dataContentDetail = await res.json();
 
+  console.log(dataRaw);
   return {
     id_video: dataRaw.id.videoId,
     title: dataRaw.snippet.title,
