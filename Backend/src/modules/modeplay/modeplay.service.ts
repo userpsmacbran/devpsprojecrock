@@ -14,16 +14,17 @@ export class ModeplayService {
     private readonly modePlayRepository: Repository<ModePlay>
   ) {}
 
-  create(createModeplayDto: CreateModeplayDto) {
+  async create(createModeplayDto: CreateModeplayDto) {
     const { title, type, value } = createModeplayDto;
 
-    const modePlayFound = this.modePlayRepository.findOne({
+    const modePlayFound = await this.modePlayRepository.findOne({
       where: { title },
     });
 
     if (modePlayFound) {
-      throw new HttpException("MODE_PLAY_EXIST", 400);
+      throw new HttpException("MODE_PLAY_ALREADY_EXISTS", 400);
     }
+
     return this.modePlayRepository.save({
       title,
       type,
@@ -32,8 +33,9 @@ export class ModeplayService {
   }
 
   //Buscar todos los modePlays
-  findAll() {
-    return `This action returns all modeplay`;
+  async findAll() {
+    const modePlays = await this.modePlayRepository.find();
+    return modePlays;
   }
 
   //Buscar un modePlay por id
