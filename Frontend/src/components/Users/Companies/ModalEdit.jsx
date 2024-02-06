@@ -90,6 +90,7 @@ function ModalEdit({ selectedCompany, updateLocalCompany, onClose }) {
 
   const handleFieldChange = (field, value) => {
     setError(null);
+
     setEditedCompany((prevEditedCompany) => ({
       ...prevEditedCompany,
       [field]: value,
