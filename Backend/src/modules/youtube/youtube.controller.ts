@@ -9,10 +9,15 @@ export class YoutubeController {
   @Get("/search")
   async findByTitle(
     @Query("title") title: string,
-    @Query("type") type: number
+    @Query("type") type: number,
+    @Query("regionCode") regionCode: string
   ) {
     try {
-      const videos = await this.youtubeService.searchVideosByTitle(title, type);
+      const videos = await this.youtubeService.searchVideosByTitle(
+        title,
+        type,
+        regionCode
+      );
       return { videos };
     } catch (error) {
       return { error: error.message };
