@@ -3,13 +3,15 @@ import { ConfigService } from "@nestjs/config";
 import { cleanData, cleanDuration, cleanVideo } from "src/utils/cleanData";
 import axios from "axios";
 import * as he from "he";
+import convertMilisecondsToTime from "src/utils/convertMilisecondsToTime";
+import convertDurationYoutubeToMiliseconds from "src/utils/convertDurationYoutubeToMiliseconds";
 
 const configService = new ConfigService();
 
 @Injectable()
 export class YoutubeService {
-  private readonly apiKey: string = "AIzaSyAiL8NBzSpk-OHvwFRVRJSwNAJxil2IVIE";
-  private readonly apiUrl: string = "https://www.googleapis.com/youtube/v3/";
+  private readonly apiKey: string = configService.get("API_KEY");
+  private readonly apiUrl: string = configService.get("API_YOUTUBE");
 
   async searchVideosByTitle(
     title: string,
@@ -52,32 +54,7 @@ export class YoutubeService {
 
     const durationRaw = videoDetails.contentDetails.duration;
     const durationInMilliseconds =
-      this.cleanDurationToMilliseconds(durationRaw);
-
-    function convertirMilisegundosATiempo(
-      durationInMilliseconds: number | null
-    ): string | null {
-      if (durationInMilliseconds === null) {
-        return null;
-      }
-
-      const fecha = new Date(durationInMilliseconds);
-
-      const horas = fecha.getUTCHours();
-      const minutos = fecha.getUTCMinutes();
-      const segundos = fecha.getUTCSeconds();
-
-      const formatoTiempo =
-        [
-          horas > 0 ? String(horas).padStart(2, "0") : null,
-          String(minutos).padStart(2, "0"),
-          String(segundos).padStart(2, "0"),
-        ]
-          .filter((value) => value !== null) // Filtrar valores nulos
-          .join(":") || "00:00"; // Si todos los componentes son nulos, devuelve "00:00"
-
-      return formatoTiempo;
-    }
+      convertDurationYoutubeToMiliseconds(durationRaw);
 
     return {
       id_video: videoId,
@@ -86,26 +63,8 @@ export class YoutubeService {
       chanelTitle: item.snippet.channelTitle,
       thumbnails: videoDetails.snippet.thumbnails,
       publishedAt: item.snippet.publishTime,
-      duration: convertirMilisegundosATiempo(durationInMilliseconds),
+      duration: convertMilisecondsToTime(durationInMilliseconds),
     };
-  }
-
-  private cleanDurationToMilliseconds(durationRaw: string): number | null {
-    const matches = durationRaw.match(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)?/);
-
-    if (!matches) {
-      console.log(`El que fallo: ${durationRaw}`);
-      throw new Error("Formato de duración no válido.");
-    }
-
-    const days = matches[1]
-      ? parseInt(matches[1], 10) * 24 * 60 * 60 * 1000
-      : 0;
-    const hours = matches[2] ? parseInt(matches[2], 10) * 60 * 60 * 1000 : 0;
-    const minutes = matches[3] ? parseInt(matches[3], 10) * 60 * 1000 : 0;
-    const seconds = matches[4] ? parseInt(matches[4], 10) * 1000 : 0;
-
-    return days + hours + minutes + seconds;
   }
 
   private async getVideoDetails(videoId: string) {
