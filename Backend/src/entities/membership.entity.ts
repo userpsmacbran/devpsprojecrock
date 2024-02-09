@@ -36,4 +36,10 @@ export class Membership extends BaseEntity {
     enum: MembershipTypes,
   })
   type: MembershipTypes;
+
+  @Column({ nullable: true })
+  employeeLimit: number;
+
+  @Column({ nullable: true })
+  screenLimit: number;
 }

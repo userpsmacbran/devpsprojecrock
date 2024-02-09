@@ -1,4 +1,4 @@
-export enum MODEPLAY {
+export enum   MODEPLAY {
   PLATINUM = 0,
   VIP = 1,
   NORMAL = 2

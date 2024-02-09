@@ -23,6 +23,7 @@ import { CityModule } from "./modules/city/city.module";
 import { StripeModule } from "./modules/stripe/stripe.module";
 import { MembershipModule } from "./modules/membership/membership.module";
 import { EmployeeModule } from "./modules/employee/employee.module";
+import { ScreenModule } from "./modules/screen/screen.module";
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { EmployeeModule } from "./modules/employee/employee.module";
     CityModule,
     StripeModule,
     MembershipModule,
-    EmployeeModule
+    EmployeeModule,
+    ScreenModule,
   ],
   providers: [
     {

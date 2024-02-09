@@ -1,10 +1,10 @@
 import { HttpException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { cleanData, cleanDuration, cleanVideo } from "src/utils/cleanData";
 import axios from "axios";
 import * as he from "he";
 import convertMilisecondsToTime from "src/utils/convertMilisecondsToTime";
 import convertDurationYoutubeToMiliseconds from "src/utils/convertDurationYoutubeToMiliseconds";
+import { cleanVideo } from "src/utils/cleanData";
 
 const configService = new ConfigService();
 
@@ -19,14 +19,13 @@ export class YoutubeService {
     regionCode: string = ""
   ) {
     try {
-      const searchTerm = type == 0 ? `${title}` : `${title} karaoke`;
+      const searchTerm = type == 0 ? title : `${title} karaoke`;
       const params: any = {
         q: searchTerm,
         key: this.apiKey,
         part: "snippet",
         type: "video",
         maxResults: 10,
-        eventType: "completed",
       };
 
       if (regionCode) {
@@ -35,11 +34,14 @@ export class YoutubeService {
 
       const response = await axios.get(`${this.apiUrl}search`, { params });
       const videoItems = response.data.items;
-      const videos = await Promise.all(
-        videoItems.map(async (item: any) => {
-          return await this.mapVideoItem(item);
-        })
+
+      // Filtra las transmisiones en vivo
+      const filteredVideos = await Promise.all(
+        videoItems.map(async (item: any) => await this.mapVideoItem(item))
       );
+
+      // Filtra y elimina los elementos nulos
+      const videos = filteredVideos.filter((video) => video !== null);
 
       return videos;
     } catch (error) {
@@ -51,6 +53,17 @@ export class YoutubeService {
   private async mapVideoItem(item: any) {
     const videoId = item.id.videoId;
     const videoDetails = await this.getVideoDetails(videoId);
+
+    console.log(videoDetails.snippet.liveBroadcastContent);
+
+    // Verifica si el video es una transmisión en vivo
+    const isLiveBroadcast =
+      videoDetails.snippet.liveBroadcastContent === "live";
+
+    if (isLiveBroadcast) {
+      // Si es una transmisión en vivo, omitir este video
+      return null;
+    }
 
     const durationRaw = videoDetails.contentDetails.duration;
     const durationInMilliseconds =
