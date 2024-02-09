@@ -124,7 +124,7 @@ export class UserService {
 
     // Actualizar la propiedad isDelete a true en lugar de eliminar físicamente el registro
     user.isDelete = true;
-    user.email = `${user.email}-deleted`; 
+    user.email = `${user.email}-deleted`;
     await this.userRepository.save(user);
 
     return {
@@ -159,6 +159,18 @@ export class UserService {
 
       user.activeMembership = membership;
       user.membershipExpirationDate = expirationDate;
+
+      console.log(
+        "El limite de esta membresia de pantallas es: ",
+        membership.screenLimit
+      );
+      console.log(
+        "El limite de esta membresia de empleados es: ",
+        membership.employeeLimit
+      );
+
+      user.screenLimit = membership.screenLimit;
+      user.employeLimit = membership.employeeLimit;
 
       const emailContent = `
       <html>
@@ -267,7 +279,9 @@ export class UserService {
 
     user.activeMembership = null;
     user.membershipExpirationDate = null;
-
+    user.employeLimit = null;
+    user.screenLimit = null;
+    
     await this.userRepository.save(user);
 
     this.emailService.sendEmail(

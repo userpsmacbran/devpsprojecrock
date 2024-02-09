@@ -40,10 +40,23 @@ export class MembershipService {
         throw new HttpException(stripeError.response, 500);
       }
 
+      const membership = new Membership();
+      if (type === 10) {
+        membership.employeeLimit = 1;
+        membership.screenLimit = 2;
+      }
+
+      if (type === 20) {
+        membership.employeeLimit = 3;
+        membership.screenLimit = 3;
+      }
+
+      if (type === 30) {
+        membership.employeeLimit = 5;
+        membership.screenLimit = 5;
+      }
       //Cast amount to dollars
       const priceInDollar = amount / 100;
-
-      const membership = new Membership();
       membership.name = name;
       membership.price = price.id;
       membership.currency = currency;

@@ -21,6 +21,7 @@ import { City } from "./city.entity";
 import { Membership } from "./membership.entity";
 import { MembershipTypes } from "src/constants/membership.enum";
 import { Employee } from "./employee.entity";
+import { Screen } from "./screen.entity";
 @Entity("user")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -118,4 +119,13 @@ export class User extends BaseEntity {
 
   @Column({ default: false })
   isDelete: boolean;
+
+  @OneToMany(() => Screen, (screen) => screen.company)
+  screens: Screen[];
+
+  @Column({ nullable: true})
+  employeLimit: number;
+
+  @Column({nullable: true})
+  screenLimit: number;
 }
